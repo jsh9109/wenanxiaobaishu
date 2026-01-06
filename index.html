@@ -7,19 +7,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-        
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -28,107 +22,27 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
         }
-        
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 30px;
             text-align: center;
-            position: relative;
         }
-        
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            opacity: 0.9;
-            font-size: 14px;
-        }
-        
-        .admin-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 2px solid rgba(255,255,255,0.5);
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.3s;
-        }
-        
-        .admin-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-        
-        .content {
-            padding: 30px;
-        }
-        
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .content { padding: 30px; }
         .section {
             background: #f8f9fa;
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
         }
-        
         .section-title {
             font-size: 18px;
             font-weight: bold;
             margin-bottom: 15px;
             color: #333;
-            display: flex;
-            align-items: center;
         }
-        
-        .section-title::before {
-            content: "";
-            display: inline-block;
-            width: 4px;
-            height: 20px;
-            background: #667eea;
-            margin-right: 10px;
-            border-radius: 2px;
-        }
-        
-        .info-box {
-            background: white;
-            border-left: 4px solid #667eea;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-        }
-        
-        .info-box h3 {
-            color: #667eea;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-        
-        .info-box p {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 8px;
-        }
-        
-        .info-box a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        
-        .info-box a:hover {
-            text-decoration: underline;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
+        .form-group { margin-bottom: 15px; }
         label {
             display: block;
             margin-bottom: 8px;
@@ -136,10 +50,8 @@
             font-weight: 500;
             font-size: 14px;
         }
-        
         input[type="text"],
         input[type="password"],
-        input[type="date"],
         input[type="file"],
         select {
             width: 100%;
@@ -147,15 +59,7 @@
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 14px;
-            transition: border-color 0.3s;
         }
-        
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
         .btn {
             padding: 12px 24px;
             border: none;
@@ -167,145 +71,28 @@
             margin-right: 10px;
             margin-bottom: 10px;
         }
-        
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-        
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-        
-        .btn-download {
-            background: #17a2b8;
-            color: white;
-        }
-        
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .status {
             padding: 15px;
             border-radius: 8px;
             margin-top: 15px;
         }
-        
         .status.success {
             background: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
         }
-        
         .status.error {
             background: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
-        
-        .status.info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        
-        .hidden {
-            display: none !important;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal.show {
-            display: flex;
-        }
-        
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .modal-title {
-            font-size: 20px;
-            font-weight: bold;
-        }
-        
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #999;
-        }
-        
-        .code-display {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            margin: 20px 0;
-        }
-        
-        .code-text {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 2px;
-        }
-        
-        .code-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .code-item {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #e0e0e0;
-        }
-        
-        .progress-container {
-            margin-top: 20px;
-        }
-        
+        .hidden { display: none !important; }
+        .progress-container { margin-top: 20px; }
         .progress-bar {
             width: 100%;
             height: 30px;
@@ -313,7 +100,6 @@
             border-radius: 15px;
             overflow: hidden;
         }
-        
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
@@ -325,7 +111,6 @@
             font-size: 12px;
             font-weight: bold;
         }
-        
         .log {
             margin-top: 15px;
             padding: 15px;
@@ -337,220 +122,56 @@
             font-size: 12px;
             line-height: 1.8;
         }
-        
         .log-item {
             margin-bottom: 5px;
             padding: 5px;
             border-left: 3px solid #667eea;
             padding-left: 10px;
         }
-        
-        .quick-date {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .quick-date button {
-            flex: 1;
-            padding: 8px;
-            background: #e9ecef;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        
-        .quick-date button:hover {
-            background: #dee2e6;
-        }
-        
-        .highlight {
-            background: #fff3cd;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-weight: bold;
-        }
-        
-        .template-info {
-            background: #e7f3ff;
-            border: 1px solid #b3d9ff;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-        }
-        
-        .template-info strong {
-            color: #0066cc;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <button class="admin-btn" onclick="showAdminModal()">🔧 管理员</button>
             <h1>🎨 小红书文案生成器</h1>
-            <p>网页版 v2.0 - 专业、高效、易用</p>
+            <p>v3.0 - 2个模板 + 变体系统</p>
         </div>
         
         <div class="content">
-            <!-- 重要提示：API注册 -->
-            <div class="section">
-                <div class="section-title">📢 使用前必读</div>
-                
-                <div class="info-box">
-                    <h3>🔑 第一步：注册并购买API</h3>
-                    <p>本工具需要配合GPTs API使用，请先注册并充值：</p>
-                    <p>
-                        <strong>官方网站：</strong>
-                        <a href="https://gptsapi.net/api" target="_blank">https://gptsapi.net/api</a>
-                    </p>
-                    <p>
-                        <strong>注册流程：</strong>
-                        1. 点击上方链接注册账号 → 
-                        2. 充值（建议¥5起，可生成约50条） → 
-                        3. 获取API Key
-                    </p>
-                    <p>
-                        <strong>费用说明：</strong>
-                        约 ¥0.1/条文案，50条约¥5，不需要梯子，国内可用
-                    </p>
-                    <p style="margin-top: 10px;">
-                        <button class="btn btn-primary" onclick="showUserGuide()" style="padding: 8px 20px; font-size: 13px;">
-                            📖 查看详细使用说明
-                        </button>
-                    </p>
-                </div>
-                
-                <div class="info-box">
-                    <h3>📥 第二步：两步流程生成文案</h3>
-                    
-                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #ffc107;">
-                        <strong style="color: #856404; font-size: 16px;">💡 完整流程说明</strong><br>
-                        <div style="margin-top: 10px; line-height: 2; color: #856404;">
-                            <strong>→ 步骤1：智能分配选题</strong><br>
-                            　　下载空白模板 → 填写标题 → 上传获取智能分配结果<br><br>
-                            <strong>→ 步骤2：批量生成文案</strong><br>
-                            　　上传分配结果 → 开始生成 → 下载最终文案
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 步骤1：智能分配选题 -->
-                <div class="info-box" style="border-left: 4px solid #28a745;">
-                    <h3>🎯 步骤1：智能分配选题</h3>
-                    
-                    <div style="background: #e7f3ff; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
-                        <strong style="color: #0066cc;">操作流程：</strong><br>
-                        1️⃣ 下载空白模板 → 2️⃣ 填写标题列 → 3️⃣ 上传智能分配 → 4️⃣ 下载分配结果
-                    </div>
-                    
-                    <div class="btn-group">
-                        <button class="btn btn-download" onclick="downloadBlankTemplate()">
-                            📥 1. 下载空白模板
-                        </button>
-                        <button class="btn btn-success" onclick="showTopicAssigner()">
-                            🎯 2. 智能分配选题
-                        </button>
-                    </div>
-                    
-                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-top: 15px; font-size: 13px;">
-                        <strong>📋 空白模板格式：</strong>只有"标题"列<br>
-                        <strong>📋 分配结果格式：</strong>序号、模板类型、标题、选题、生成数量
-                    </div>
-                </div>
-                
-                <!-- 步骤2：批量生成（在生成区域会详细说明） -->
-            </div>
-            </div>
-            
-            <!-- 选题智能分配工具 -->
-            <div class="section hidden" id="topicAssignerSection">
-                <div class="section-title">🎯 步骤1-2：智能分配选题</div>
-                
-                <div class="info-box" style="background: #e7f3ff; border-left: 4px solid #0066cc;">
-                    <h3 style="color: #0066cc; margin-bottom: 10px;">📤 上传填写好的标题Excel</h3>
-                    <p style="margin-bottom: 10px;">
-                        <strong>系统将自动为每个标题分配：</strong>
-                    </p>
-                    <div style="background: white; padding: 10px; border-radius: 6px;">
-                        ✅ <strong>模板类型</strong>：模板1（技能类）/ 模板2（原因类）/ 模板3（教程类）<br>
-                        ✅ <strong>选题/主题</strong>：接话、人情世故、社交智慧、玩不熟、防套话、通用<br>
-                        ✅ <strong>生成数量</strong>：默认每个标题生成1条（可修改）
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>上传标题Excel（仅包含"标题"列）</label>
-                    <input type="file" id="titleFile" accept=".xlsx,.xls" onchange="handleTitleFile()">
-                    <div class="status hidden" id="titleFileInfo"></div>
-                </div>
-                
-                <button class="btn btn-primary" id="assignBtn" onclick="assignTopics()" disabled>开始智能分配</button>
-                
-                <div class="progress-container hidden" id="assignProgress">
-                    <div class="status info" id="assignStatus"></div>
-                </div>
-            </div>
-
-            <!-- 用户端：激活区 -->
             <div class="section" id="activationSection">
                 <div class="section-title">🔑 软件激活</div>
                 <div class="form-group">
                     <label>激活码</label>
-                    <input type="text" id="activationCode" placeholder="例如: XHS-ALL-20261231-7BF5">
+                    <input type="text" id="activationCode" placeholder="XHS-ALL-20261231-7BF5">
                 </div>
                 <button class="btn btn-primary" onclick="activate()">激活软件</button>
                 <div class="status hidden" id="activationStatus"></div>
             </div>
             
-            <!-- 用户端：已激活信息 -->
             <div class="section hidden" id="activatedInfo">
                 <div class="section-title">✅ 已激活</div>
                 <p>业务线: <span id="businessInfo"></span></p>
                 <p>到期时间: <span id="expireInfo"></span></p>
-                <button class="btn btn-secondary" onclick="resetActivation()">重新激活</button>
             </div>
             
-            <!-- 用户端：API配置 -->
             <div class="section hidden" id="apiSection">
                 <div class="section-title">⚙️ API配置</div>
-                <div class="info-box">
-                    <p>请输入您从 <a href="https://gptsapi.net/api" target="_blank">GPTs API</a> 获取的API Key</p>
-                </div>
                 <div class="form-group">
-                    <label>GPTs API Key</label>
-                    <input type="password" id="apiKey" placeholder="sk-xxxxxxxxxxxxxxxx">
+                    <label>GPTs API Key（选填）</label>
+                    <input type="password" id="apiKey" placeholder="暂时不需要">
                 </div>
                 <button class="btn btn-primary" onclick="saveApiKey()">保存配置</button>
                 <div class="status hidden" id="apiStatus"></div>
             </div>
             
-            <!-- 用户端：生成区 -->
             <div class="section hidden" id="generateSection">
                 <div class="section-title">📝 批量生成</div>
-                
-                <div class="info-box">
-                    <p>
-                        <strong>温馨提示：</strong>
-                        请使用 
-                        <button class="btn btn-download" onclick="downloadTemplate()" style="padding: 4px 12px; font-size: 12px; display: inline-block; margin: 0;">
-                            📥 下载标题模板
-                        </button>
-                        填写后上传，避免格式错误
-                    </p>
-                </div>
-                
                 <div class="form-group">
-                    <label>上传标题Excel文件</label>
+                    <label>上传Excel文件（标题、选题、模板类型）</label>
                     <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="handleFileSelect()">
                     <div class="status hidden" id="fileInfo"></div>
                 </div>
-                
                 <button class="btn btn-primary" id="generateBtn" onclick="startGeneration()" disabled>开始生成</button>
-                <button class="btn" style="background: #ff9800; color: white; display: none;" onclick="pauseGeneration()" id="pauseBtn">⏸️ 暂停</button>
-                <button class="btn" style="background: #4CAF50; color: white; display: none;" onclick="resumeGeneration()" id="resumeBtn">▶️ 继续</button>
-                
                 <div class="progress-container hidden" id="progressContainer">
                     <div class="progress-bar">
                         <div class="progress-fill" id="progressFill">0%</div>
@@ -561,1073 +182,243 @@
         </div>
     </div>
 
-    <!-- 管理员模态框 -->
-    <div class="modal" id="adminModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">🔧 管理员面板</div>
-                <button class="close-btn" onclick="closeAdminModal()">×</button>
-            </div>
-            
-            <!-- 管理员登录 -->
-            <div id="adminLogin">
-                <div class="form-group">
-                    <label>管理员密码</label>
-                    <input type="password" id="adminPassword" placeholder="输入管理员密码">
-                </div>
-                <button class="btn btn-primary" onclick="adminLogin()">登录</button>
-                <div class="status hidden" id="adminLoginStatus"></div>
-            </div>
-            
-            <!-- 管理员功能 -->
-            <div id="adminPanel" class="hidden">
-                <div class="section">
-                    <div class="section-title">🎫 生成激活码</div>
-                    
-                    <div class="form-group">
-                        <label>业务线</label>
-                        <select id="businessType">
-                            <option value="social">社会化指南</option>
-                            <option value="ring">戒指</option>
-                            <option value="travel">旅游</option>
-                            <option value="psychology">心理测试</option>
-                            <option value="all">全部业务线</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>到期日期</label>
-                        <input type="date" id="expireDate">
-                        <div class="quick-date">
-                            <button onclick="setQuickDate(30)">1个月</button>
-                            <button onclick="setQuickDate(90)">3个月</button>
-                            <button onclick="setQuickDate(180)">6个月</button>
-                            <button onclick="setQuickDate(365)">1年</button>
-                            <button onclick="setQuickDate(3650)">永久</button>
-                        </div>
-                    </div>
-                    
-                    <button class="btn btn-success" onclick="generateCode()">生成激活码</button>
-                    
-                    <div class="code-display hidden" id="codeDisplay">
-                        <div class="code-text" id="generatedCode"></div>
-                        <button class="btn btn-primary" onclick="copyCode()">复制激活码</button>
-                    </div>
-                </div>
-                
-                <div class="section">
-                    <div class="section-title">📋 已生成激活码列表</div>
-                    <div class="code-list" id="codeList"></div>
-                </div>
-                
-                <button class="btn btn-secondary" onclick="adminLogout()">退出管理</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 使用说明模态框 -->
-    <div class="modal" id="guideModal">
-        <div class="modal-content" style="max-width: 800px;">
-            <div class="modal-header">
-                <div class="modal-title">📖 详细使用说明</div>
-                <button class="close-btn" onclick="closeGuideModal()">×</button>
-            </div>
-            
-            <div style="max-height: 70vh; overflow-y: auto; padding: 10px;">
-                
-                <div class="info-box">
-                    <h3 style="color: #667eea; font-size: 18px; margin-bottom: 15px;">
-                        🎯 完整使用流程（小白版）
-                    </h3>
-                    <p style="font-size: 14px; color: #666; line-height: 1.8;">
-                        本工具可以批量生成小红书文案，只需3步即可完成。以下是从零开始的完整教程。
-                    </p>
-                </div>
-
-                <!-- 第一步 -->
-                <div class="section" style="margin-bottom: 20px;">
-                    <h3 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">
-                        📝 第一步：注册并购买API（必须完成）
-                    </h3>
-                    
-                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            1.1 打开注册网站
-                        </h4>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 点击这个链接：<a href="https://gptsapi.net/api" target="_blank" style="color: #667eea; font-weight: bold;">https://gptsapi.net/api</a>
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 或者复制网址到浏览器打开
-                        </p>
-                        <p style="color: #999; font-size: 12px; font-style: italic;">
-                            💡 提示：这是官方API服务商，安全可靠
-                        </p>
-                    </div>
-
-                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            1.2 注册账号
-                        </h4>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 点击网站上的"注册"按钮
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 输入邮箱和密码（记住密码！）
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 点击"注册"完成
-                        </p>
-                        <p style="color: #999; font-size: 12px; font-style: italic;">
-                            ⏱️ 耗时：1分钟
-                        </p>
-                    </div>
-
-                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            1.3 充值（重要！）
-                        </h4>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 登录后，找到"充值"或"余额"按钮
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • <strong style="color: #e74c3c;">建议充值：¥5元</strong>（可生成约50条文案）
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 支付方式：微信/支付宝/银行卡
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 充值后余额立即到账
-                        </p>
-                        <div style="background: #fff3cd; padding: 10px; border-radius: 6px; margin-top: 10px;">
-                            <p style="color: #856404; font-size: 12px; margin: 0;">
-                                💰 <strong>费用说明：</strong><br>
-                                • 1条文案 ≈ ¥0.1<br>
-                                • 50条文案 ≈ ¥5<br>
-                                • 100条文案 ≈ ¥10<br>
-                                <strong>用多少扣多少，余额可查看</strong>
-                            </p>
-                        </div>
-                    </div>
-
-                    <div style="background: white; padding: 15px; border-radius: 8px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            1.4 获取API Key（关键！）
-                        </h4>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 充值后，找到"API管理"或"API Key"菜单
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 点击"创建新的API Key"
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • <strong style="color: #e74c3c;">复制这个Key并保存好！</strong>
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • Key格式类似：sk-xxxxxxxxxxxxxxxx
-                        </p>
-                        <div style="background: #f8d7da; padding: 10px; border-radius: 6px; margin-top: 10px;">
-                            <p style="color: #721c24; font-size: 12px; margin: 0;">
-                                ⚠️ <strong>重要提醒：</strong><br>
-                                • API Key只显示一次，一定要复制保存！<br>
-                                • 丢失了需要重新创建
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 第二步 -->
-                <div class="section" style="margin-bottom: 20px;">
-                    <h3 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">
-                        📋 第二步：准备标题Excel文件
-                    </h3>
-                    
-                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            2.1 下载模板（强烈建议！）
-                        </h4>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 在工具主页找到"📥 下载标题模板"按钮
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 点击后自动下载Excel文件
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 文件名：<span style="color: #667eea;">小红书标题模板.xlsx</span>
-                        </p>
-                        <p style="color: #999; font-size: 12px; font-style: italic;">
-                            💡 为什么要用模板？避免格式错误，省时省力！
-                        </p>
-                    </div>
-
-                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            2.2 填写标题（按模板格式）
-                        </h4>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 打开下载的模板文件（用Excel或WPS）
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 看到两列：<strong>"标题"</strong> 和 <strong>"选题"</strong>
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 删除模板里的示例数据
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 在"<strong>标题</strong>"列填写你的标题（必填）
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 在"<strong>选题</strong>"列填写类型（可选，如：接话、人情世故）
-                        </p>
-                        <div style="background: #d1ecf1; padding: 10px; border-radius: 6px; margin-top: 10px;">
-                            <p style="color: #0c5460; font-size: 12px; margin: 0;">
-                                📝 <strong>填写示例：</strong>
-                            </p>
-                            <table style="width: 100%; margin-top: 8px; border-collapse: collapse;">
-                                <tr style="background: #bee5eb;">
-                                    <td style="padding: 6px; border: 1px solid #0c5460; font-weight: bold; font-size: 12px;">标题</td>
-                                    <td style="padding: 6px; border: 1px solid #0c5460; font-weight: bold; font-size: 12px;">选题</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 6px; border: 1px solid #0c5460; font-size: 12px;">会办事的女孩子有多厉害</td>
-                                    <td style="padding: 6px; border: 1px solid #0c5460; font-size: 12px;">接话</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 6px; border: 1px solid #0c5460; font-size: 12px;">你的答谢方式暴露了社交段位</td>
-                                    <td style="padding: 6px; border: 1px solid #0c5460; font-size: 12px;">人情世故</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div style="background: white; padding: 15px; border-radius: 8px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            2.3 保存文件
-                        </h4>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 填写完成后，点击"保存"（Ctrl+S）
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 记住文件保存位置（如：桌面）
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 关闭Excel文件
-                        </p>
-                    </div>
-                </div>
-
-                <!-- 第三步 -->
-                <div class="section" style="margin-bottom: 20px;">
-                    <h3 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">
-                        🚀 第三步：使用生成器生成文案
-                    </h3>
-                    
-                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            3.1 激活软件
-                        </h4>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 找到"🔑 软件激活"区域
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 输入管理员给你的激活码
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 激活码格式：XHS-XXX-XXXXXXXX-XXXX
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 点击"激活软件"
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 看到"✅ 激活成功"提示
-                        </p>
-                    </div>
-
-                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            3.2 配置API Key
-                        </h4>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 激活后会看到"⚙️ API配置"区域
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 在输入框中粘贴你的API Key（第一步获取的）
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 点击"保存配置"
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 看到"✅ API Key已保存"
-                        </p>
-                        <div style="background: #f8d7da; padding: 10px; border-radius: 6px; margin-top: 10px;">
-                            <p style="color: #721c24; font-size: 12px; margin: 0;">
-                                ⚠️ <strong>找不到API Key？</strong><br>
-                                回到第一步1.4，重新查看获取方法
-                            </p>
-                        </div>
-                    </div>
-
-                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            3.3 上传Excel文件
-                        </h4>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 配置完成后会看到"📝 批量生成"区域
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 点击"选择Excel文件"或"选择文件"
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 找到你刚才保存的Excel文件
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 双击文件或点击"打开"
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 看到"✅ 文件: xxx.xlsx | 数据: X 条"
-                        </p>
-                    </div>
-
-                    <div style="background: white; padding: 15px; border-radius: 8px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            3.4 开始生成
-                        </h4>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 点击蓝色的"开始生成"按钮
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 会出现进度条和日志
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 看到进度：1/10、2/10... 逐步生成
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • <strong>耐心等待</strong>（每条约3-5秒）
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 全部完成后自动下载结果文件
-                        </p>
-                        <div style="background: #d4edda; padding: 10px; border-radius: 6px; margin-top: 10px;">
-                            <p style="color: #155724; font-size: 12px; margin: 0;">
-                                ⏱️ <strong>生成时间估算：</strong><br>
-                                • 10条标题 ≈ 30-50秒<br>
-                                • 50条标题 ≈ 3-5分钟<br>
-                                • 100条标题 ≈ 5-10分钟
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 第四步 -->
-                <div class="section" style="margin-bottom: 20px;">
-                    <h3 style="color: #667eea; margin-bottom: 15px; font-size: 16px;">
-                        📥 第四步：查看和使用生成结果
-                    </h3>
-                    
-                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            4.1 打开结果文件
-                        </h4>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 生成完成后会自动下载Excel文件
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 文件名：小红书文案_日期时间.xlsx
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 通常在"下载"文件夹中
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 双击打开文件
-                        </p>
-                    </div>
-
-                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            4.2 结果文件包含什么
-                        </h4>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            Excel文件包含以下列：
-                        </p>
-                        <table style="width: 100%; margin-top: 8px; border-collapse: collapse; font-size: 12px;">
-                            <tr style="background: #f8f9fa;">
-                                <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">序号</td>
-                                <td style="padding: 6px; border: 1px solid #ddd;">1, 2, 3...</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">标题</td>
-                                <td style="padding: 6px; border: 1px solid #ddd;">你提交的标题</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">选题</td>
-                                <td style="padding: 6px; border: 1px solid #ddd;">接话/人情世故等</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">文案</td>
-                                <td style="padding: 6px; border: 1px solid #ddd;"><strong>生成的完整文案（600字左右）</strong></td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 6px; border: 1px solid #ddd; font-weight: bold;">字数</td>
-                                <td style="padding: 6px; border: 1px solid #ddd;">文案字数统计</td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <div style="background: white; padding: 15px; border-radius: 8px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            4.3 如何使用文案
-                        </h4>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 打开Excel，找到"文案"列
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 复制需要的文案内容
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 粘贴到小红书发布界面
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 可以根据需要稍作修改
-                        </p>
-                        <p style="color: #666; margin-bottom: 8px; font-size: 13px;">
-                            • 发布即可！
-                        </p>
-                    </div>
-                </div>
-
-                <!-- 常见问题 -->
-                <div class="section">
-                    <h3 style="color: #e74c3c; margin-bottom: 15px; font-size: 16px;">
-                        ❓ 常见问题解答
-                    </h3>
-                    
-                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            Q1: 需要梯子（VPN）吗？
-                        </h4>
-                        <p style="color: #666; font-size: 13px; margin: 0;">
-                            <strong style="color: #28a745;">✅ 不需要！</strong>国内网络可直接使用，GPTs API服务器在国内可访问。
-                        </p>
-                    </div>
-
-                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            Q2: 激活码在哪里获取？
-                        </h4>
-                        <p style="color: #666; font-size: 13px; margin: 0;">
-                            <strong>联系管理员购买。</strong>激活码包含软件使用权限，不同套餐有不同有效期。
-                        </p>
-                    </div>
-
-                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            Q3: API费用是另外付吗？
-                        </h4>
-                        <p style="color: #666; font-size: 13px; margin: 0;">
-                            <strong style="color: #e74c3c;">是的。</strong>激活码是软件费用，API费用需要自己在GPTs API充值，按实际使用量扣费。
-                        </p>
-                    </div>
-
-                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            Q4: 生成失败怎么办？
-                        </h4>
-                        <p style="color: #666; font-size: 13px;">
-                            可能原因：<br>
-                            1. API Key错误 → 检查是否复制完整<br>
-                            2. 余额不足 → 去GPTs API充值<br>
-                            3. 网络问题 → 检查网络连接<br>
-                            4. Excel格式错误 → 使用提供的模板
-                        </p>
-                    </div>
-
-                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            Q5: 可以生成多少条？
-                        </h4>
-                        <p style="color: #666; font-size: 13px; margin: 0;">
-                            <strong>没有限制！</strong>取决于你的激活码有效期和API余额。余额用完了充值即可继续使用。
-                        </p>
-                    </div>
-
-                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            Q6: 生成的文案质量怎么样？
-                        </h4>
-                        <p style="color: #666; font-size: 13px; margin: 0;">
-                            文案由Claude AI生成，质量很高，约600字，包含emoji和话题标签，直接可用。建议稍作修改更符合个人风格。
-                        </p>
-                    </div>
-
-                    <div style="background: white; padding: 15px; border-radius: 8px;">
-                        <h4 style="color: #333; font-size: 14px; margin-bottom: 10px;">
-                            Q7: 余额查询在哪里？
-                        </h4>
-                        <p style="color: #666; font-size: 13px; margin: 0;">
-                            登录 <a href="https://gptsapi.net/api" target="_blank" style="color: #667eea;">GPTs API官网</a>，在用户中心可以看到余额和消费记录。
-                        </p>
-                    </div>
-                </div>
-
-                <!-- 快速检查清单 -->
-                <div class="info-box" style="background: #d4edda; border-color: #c3e6cb;">
-                    <h3 style="color: #155724; font-size: 16px; margin-bottom: 15px;">
-                        ✅ 使用前快速检查清单
-                    </h3>
-                    <div style="font-size: 13px; color: #155724; line-height: 2;">
-                        ☑️ 已在 GPTs API 注册并充值（至少¥5）<br>
-                        ☑️ 已获取并保存 API Key<br>
-                        ☑️ 已下载标题模板并填写好标题<br>
-                        ☑️ 已获得激活码<br>
-                        ☑️ 网络连接正常<br>
-                        <br>
-                        <strong>全部打勾？开始生成吧！🚀</strong>
-                    </div>
-                </div>
-
-            </div>
-            
-            <div style="text-align: center; margin-top: 20px;">
-                <button class="btn btn-primary" onclick="closeGuideModal()">我知道了</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // ========== 配置 ==========
         const CONFIG = {
-            SECRET_KEY: "xiaohongshu_2025_secret_key_change_me",
-            ADMIN_PASSWORD: "lss900201",
-            API_BASE_URL: "https://api.gptsapi.net/v1/messages",
-            MODEL: "claude-sonnet-4-20250514",
             SENSITIVE_WORDS: {
-                '技巧': '方法',
-                '帮助': '协助',
-                '沦为': '变成',
-                '技术': '方式'
+                '技巧': '方法', '技能': '方式', '沦为': '变成', '帮助': '邦助',
+                '技术': '方法', '不足': '不够', '课程': '章节', '工作': '工做',
+                '节课': '内容', '职场': '值场', '提升': '变好', '公司': '公同',
+                '单位': '單位', '同事': '同士'
             }
         };
-        
-        // ========== 设备指纹 ==========
-        function getDeviceFingerprint() {
-            // 收集浏览器信息
-            const components = [
-                navigator.userAgent,
-                navigator.language,
-                screen.width + 'x' + screen.height,
-                screen.colorDepth,
-                new Date().getTimezoneOffset(),
-                !!window.sessionStorage,
-                !!window.localStorage
-            ];
+
+        const VARIANTS = {
+            personalIntro: [
+                "因为曾经我也是一个内向、敏感的人，不善沟通，不会处事",
+                "说实话，我以前也是个不善言辞的人，社交上碰了不少钉子",
+                "坦白讲，过去的我也不懂如何社交，不会来事，吃过很多亏",
+                "回想起来，我也经历过那种不知道怎么和人打交道的阶段",
+                "其实我也是从一个社交小白慢慢摸索过来的，走过不少弯路",
+                "以前的我也是那种在社交场合不知所措的人，说话都紧张",
+                "很长一段时间，我也是那种不会接话、聊天总冷场的人",
+                "曾经的我也是个社交困难户，见人就紧张，不知道说什么好",
+                "我也经历过不懂人情世故、到处碰壁的阶段",
+                "以前我也是个在人际交往中特别笨拙的人",
+                "说来惭愧，我也曾是那种社交能力很差的人",
+                "过去的我在社交方面也是一塌糊涂，经常闹笑话",
+                "我也有过那段不会说话、不懂规矩的时期",
+                "曾几何时，我也是个在人群中找不到存在感的人",
+                "回头看，我那时候真的是个社交废柴"
+            ],
             
-            // Canvas指纹
-            try {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                ctx.textBaseline = 'top';
-                ctx.font = '14px Arial';
-                ctx.fillStyle = '#f60';
-                ctx.fillRect(0, 0, 100, 50);
-                ctx.fillStyle = '#069';
-                ctx.fillText('Device Fingerprint', 2, 15);
-                components.push(canvas.toDataURL());
-            } catch (e) {
-                components.push('canvas-error');
-            }
-            
-            // 生成指纹
-            const fingerprint = components.join('###');
-            return CryptoJS.MD5(fingerprint).toString();
-        }
-        
-        // ========== 使用说明模态框 ==========
-        function showUserGuide() {
-            document.getElementById('guideModal').classList.add('show');
-        }
-        
-        function closeGuideModal() {
-            document.getElementById('guideModal').classList.remove('show');
-        }
-        
-        // ========== 下载模板 ==========
-        
-        
-        // ========== 选题关键词库 ==========
-        const TOPIC_KEYWORDS = {
-            '接话': ['接话', '闲聊', '闲谈', '聊天', '对话', '交谈'],
-            '人情世故': ['人情世故', '答谢', '感谢', '礼尚往来', '送礼', '回礼'],
-            '社交智慧': ['社交', '交际', '应酬', '社会化', '人际关系', '关系'],
-            '玩不熟': ['玩不熟', '边界感', '距离', '分寸', '界限'],
-            '防套话': ['套话', '话术', '被套路', '试探', '打探'],
-            '通用': []
+            changeProcess: [
+                "所以，我花了四年时间，慢慢改变自己，现在我将我的经验总结成了一份20万字、67节内容的社会化攻略指南",
+                "为此，我用了四年时间摸索总结，把自己的经验整理成了一份20万字、包含67堂内容的社会化变好指南",
+                "经过四年的实践和总结，我把这些心得体会整理成了一份完整的社会化指南，总共20万字，包含67个专题内容",
+                "这四年里，我一点点积累经验，最终把它们梳理成了一套系统的社会化手册，20万字干货，67节实战内容",
+                "我花了整整四年时间，从零开始学习摸索，现在把这些宝贵经验写成了20万字的社会化指南，分成67内容详细讲解",
+                "四年的时间，我从不会社交到慢慢找到方式，把所有经验都记录下来，整理成20万字、67堂内容的实用指南",
+                "用了四年时间改变自己，现在我把这段经历和方式都写进了这份20万字的社会化指南里，一共67节内容",
+                "这四年的摸索让我总结出了一套完整的方式，现在把它们整理成了20万字、67内容的系统化指南",
+                "四年时间，我把自己从社交小白练成了老手，现在把这些经验写成了20万字、67节内容的指南",
+                "经过四年的学习和实践，我整理出了这份20万字、67个专题内容的社会化手册",
+                "我用四年时间总结经验，最终形成了这份20万字、包含67节内容的完整指南",
+                "四年的积累，让我把这些心得整理成了一份系统的指南，20万字内容，67个章节",
+                "花了四年摸索，我把所有经验提炼成了这份20万字、67节内容的实战手册",
+                "四年时间，从零到一，我把这个过程整理成了20万字、67内容的社会化指南",
+                "经过四年的沉淀，我将这些经验汇总成了20万字、67专题内容的完整手册"
+            ],
+
+            hopeMessage: [
+                "希望你也能和我一样，从内向敏感变成落落大方，少走几年弯路，懂得为人处事的方式",
+                "如果你也有同样的困扰，这份指南或许能邦助到你，让你从不善表达变成侃侃而谈，少走一些弯路，掌握为人处世的智慧",
+                "把这些经验分享出来，希望能让更多人少走弯路，从不会来事变成游刃有余，真正懂得为人处世的分寸",
+                "分享这份指南，是希望你能避开我踩过的坑，从社交小白快速成长，学会那些学校里不教的人情世故",
+                "如果这份指南能邦助你少走一些弯路，让你在社交中更自信从容，那就是我最大的心愿",
+                "希望通过这份指南，让你不用像我一样花四年时间摸索，而是能快速掌握这些社会化的方式",
+                "把这些年的经验分享给你，就是希望你能少吃点亏，少走点弯路，更快找到自己的社交节奏",
+                "如果你也想改变，这份指南可以变成你的参考，让你不用像我当年那样迷茫和焦虑",
+                "希望我的经验能邦助到你，让你在社会化的路上走得更顺一些",
+                "分享出来就是希望能让更多朋友少经历一些社交上的痛苦",
+                "如果能让你少走一年弯路，这份指南就值了",
+                "希望你能从这份指南里找到适合自己的社交方式"
+            ],
+
+            highlights: [
+                "这份手册的亮点：\n1️⃣ 全文20万字，67节内容，不掺水纯干货，只讲最有用的方式，不讲空话。内容范围，从心态到方式，再到内核修炼，手把手带你变好社会化\n2️⃣ 涵盖各种场合，值场、聚会、饭局等等，带你轻松应对所有社交难题\n3️⃣ 总结万能对话公式和各场景对话案例，邦助快速理解和学习\n4️⃣ 赠送社会化思维导图、电子书等学习资料",
+
+                "指南的核心内容：\n1️⃣ 内容实战性强，20万字精华，67堂系统内容，每个方式都有具体场景和话术，拿来就能用\n2️⃣ 场景覆盖全面，从值场到聚餐，从闲聊到应酬，各种社交场合都有对应的应对策略\n3️⃣ 提供大量真实案例和对话模板，不是空洞的理论，而是真正落地的方式\n4️⃣ 额外赠送配套学习资料，包括思维导图、电子书等",
+
+                "这套指南的特色：\n1️⃣ 系统完整，20万字干货内容分成67个专题，从基础到进阶，层层递进邦助你变好\n2️⃣ 实用性强，涵盖值场社交、朋友聚会、饭局应酬等各类场景，随查随用\n3️⃣ 方式具体，每个方式都配有详细的话术模板和实战案例，学完就能用\n4️⃣ 资源丰富，附赠社会化相关的电子书、思维导图等学习资料",
+
+                "指南包含哪些内容：\n1️⃣ 67堂精品内容，20万字实战干货，没有废话套话，全是可直接应用的具体方式\n2️⃣ 多场景覆盖，无论是值场环境、朋友聚会还是正式饭局，都能找到对应的应对方式\n3️⃣ 案例丰富，大量真实对话案例和万能公式，让你快速掌握社交话术\n4️⃣ 赠品超值，免费附送相关电子书、思维导图等补充资料",
+
+                "手册亮点介绍：\n1️⃣ 内容扎实，20万字+67内容时，纯干货输出，从认知到行动全方位变好你的社会化能力\n2️⃣ 场景全面，涵盖值场、社交、聚餐、应酬等各类场景，实用性极强\n3️⃣ 学习高效，配有大量对话模板和实战案例，方便快速理解和模仿\n4️⃣ 资源配套，赠送电子版学习资料，包括电子书、思维导图等",
+
+                "这份指南有什么：\n1️⃣ 20万字系统内容，67个实战专题，从理论到实践，手把手教你变好社会化水平\n2️⃣ 覆盖各类社交场景，值场、聚会、饭局、应酬，每个场景都有具体应对方式\n3️⃣ 大量话术模板和真实案例，让你看完就能用，学了就能说\n4️⃣ 额外赠送电子书和思维导图，邦助你更系统地学习",
+
+                "指南的主要内容：\n1️⃣ 67节系统内容，20万字纯干货，每一内容都是实战总结，没有一句废话\n2️⃣ 场景全覆盖，从日常闲聊到正式场合，从值场到社交，应有尽有\n3️⃣ 方式论+案例+话术三合一，理论和实践结合，学完立刻能用\n4️⃣ 赠送配套资料，包括电子书、思维导图等辅助工具",
+
+                "手册的核心价值：\n1️⃣ 内容系统，20万字分67个主题详细讲解，从基础认知到高级应用，循序渐进\n2️⃣ 场景丰富，涵盖值场、聚会、饭局、日常等各类社交场景的应对方式\n3️⃣ 实操性强，每个方式都配有具体案例和可直接使用的话术模板\n4️⃣ 资料齐全，附赠电子书、思维导图等学习工具",
+
+                "指南具体包含：\n1️⃣ 67堂实战内容+20万字深度内容，不讲虚的，只讲能马上用的方式\n2️⃣ 多场景应用，值场社交、朋友聚会、正式饭局、日常闲聊全覆盖\n3️⃣ 案例+话术双保险，既有真实案例让你理解，又有现成话术让你模仿\n4️⃣ 学习资料齐全，赠送电子书、思维导图等配套工具",
+
+                "这套手册的优势：\n1️⃣ 内容充实，20万字精华+67个实战专题，系统全面，学完就能用\n2️⃣ 场景实用，覆盖值场、社交、聚餐、应酬等各类真实场景\n3️⃣ 方式具体，每个方式都有详细的步骤说明和可复制的话术模板\n4️⃣ 赠品丰富，额外附送电子书、思维导图等学习辅助材料",
+
+                "手册包含什么内容：\n1️⃣ 系统化内容，67个主题20万字，从心态建设到实战话术，全方位变好\n2️⃣ 真实场景还原，值场、聚会、饭局、日常等场景的具体应对策略\n3️⃣ 案例丰富详细，大量真实对话案例+可直接套用的万能公式\n4️⃣ 配套资料完善，赠送电子书、思维导图等辅助学习工具",
+
+                "指南的特色和亮点：\n1️⃣ 内容翔实，20万字干货分成67节内容，每节内容都聚焦一个实战场景\n2️⃣ 覆盖全面，从值场到社交，从闲聊到正式场合，各种情况都有方式\n3️⃣ 学习容易，配有大量对话案例和话术模板，看懂就能用\n4️⃣ 资源配套，附赠电子书、思维导图等学习资料"
+            ],
+
+            targetAudience: [
+                "这份手册适合谁用？\n1️⃣ 内向者/社恐：害怕主动社交，想摆脱紧张和尴尬\n2️⃣ 值场新人：不懂规则，想要晋升却不懂向上管理\n3️⃣ 沟通小白：说话直来直去，常被误会，想变好表达方式\n4️⃣ 敏感型人格：过度在意他人看法，容易内耗，想学会自我调节\n5️⃣ 老实人：不会拒绝，总被占便宜，想学会保护自己\n6️⃣ 想变好影响力的人：希望建立高质量人脉，向上社交",
+
+                "适合哪些人学习：\n1️⃣ 社交焦虑者：不敢主动和人打交道，希望克服紧张感，自然融入社交场合\n2️⃣ 初入社会的新人：对人情世故一知半解，想快速适应社会规则\n3️⃣ 表达困难者：不知道怎么说话才得体，经常说错话得罪人，想变好沟通能力\n4️⃣ 容易想太多的人：总是过分在意别人的评价，希望学会放下包袱\n5️⃣ 不懂拒绝的人：总是被人占便宜，想学会保护自己的边界\n6️⃣ 想拓展人脉的人：希望认识更多优质的人，建立有价值的社交圈",
+
+                "这套指南特别适合：\n1️⃣ 性格内向的朋友：不喜欢社交但又不得不社交，想找到舒适的社交方式\n2️⃣ 刚工做的朋友：初入社会不懂规矩，想快速学会基本的人情世故\n3️⃣ 不会说话的朋友：经常因为不会表达而误会或得罪人，想变好说话水平\n4️⃣ 玻璃心的朋友：太在意别人的看法，想建立强大的内心\n5️⃣ 心软的朋友：不好意思拒绝别人，经常委屈自己，想学会say no\n6️⃣ 想变好的朋友：希望扩大社交圈，认识更高层次的人",
+
+                "如果你是以下情况，这份指南会很有邦助：\n1️⃣ 社交恐惧/内向性格：害怕人多的场合，想学会在社交中更自在\n2️⃣ 新人小白：刚进入社会，不懂那些不成文的规矩和潜规则\n3️⃣ 表达能力弱：不知道怎么聊天，经常冷场或说错话\n4️⃣ 敏感多虑：总担心别人怎么看自己，想要更自信一些\n5️⃣ 不会拒绝：总是被人麻烦，自己却不好意思say no\n6️⃣ 想扩展圈子：希望认识更多有价值的人，变好人脉质量",
+
+                "特别推荐给这几类朋友：\n1️⃣ 社恐/i人：不擅长社交但工做生活又离不开，想找到适合自己的社交方式\n2️⃣ 应届生/新人：刚进社会懵懵懂懂，想快速了解人情世故的基本规则\n3️⃣ 表达直白者：说话不会拐弯，容易无意中得罪人，想学会委婉表达\n4️⃣ 情绪敏感者：容易被别人的评价影响，想学会调节心态\n5️⃣ 边界感弱者：不懂拒绝，总是被占便宜，想学会守护自己\n6️⃣ 人脉拓展者：想认识更多优质的人，建立有质量的社交网络",
+
+                "这份指南适合：\n1️⃣ 社交小白：完全不懂社交规则，想从零开始学习\n2️⃣ 值场新手：刚开始工做，不了解单位文化和规矩\n3️⃣ 沟通困难户：不知道怎么和人聊天，经常陷入尴尬\n4️⃣ 内心敏感者：太在意别人的看法，经常自我怀疑\n5️⃣ 不会say no的人：总是答应别人的请求，自己却很累\n6️⃣ 想认识更多人：希望扩大社交范围，结识优质人脉",
+
+                "推荐给以下几类人：\n1️⃣ 害怕社交的人：不知道怎么和陌生人打交道，想克服恐惧\n2️⃣ 新入值场的人：不懂单位潜规则，想快速适应环境\n3️⃣ 不会聊天的人：聊天总是接不下去，想学会延续话题\n4️⃣ 容易受伤的人：别人一句话就能影响心情，想变得坚强\n5️⃣ 太好说话的人：不懂拒绝别人，想学会保护自己\n6️⃣ 想向上走的人：希望认识更高层次的人，拓展人脉",
+
+                "如果你有这些困扰，建议看看：\n1️⃣ 社交焦虑：在人多的场合就紧张，不知道说什么\n2️⃣ 值场迷茫：不懂单位规矩，经常做错事\n3️⃣ 表达笨拙：想说的话说不出来，或者说出来效果不好\n4️⃣ 内心脆弱：太在意别人的眼光，活得很累\n5️⃣ 不会拒绝：总是被人麻烦，自己却不好意思说不\n6️⃣ 想扩展圈子：希望认识更多有用的人",
+
+                "这些人特别需要：\n1️⃣ 社恐患者：害怕社交但又必须社交，想找到舒适的相处方式\n2️⃣ 值场萌新：对单位规则一无所知，想快速上手\n3️⃣ 话题终结者：聊天总是冷场，想学会接话\n4️⃣ 玻璃心：别人随便一句话就能伤到，想变得强大\n5️⃣ 老好人：不会拒绝任何人，想学会说不\n6️⃣ 人脉建设者：想认识更多有价值的人",
+
+                "适合这些情况的朋友：\n1️⃣ 不敢社交：看到陌生人就紧张，想学会自然交流\n2️⃣ 初入社会：不懂人情世故，想快速学习\n3️⃣ 不会表达：有想法但说不清楚，想变好表达\n4️⃣ 太敏感：总是想太多，想学会放轻松\n5️⃣ 太好说话：总是被人利用，想学会保护自己\n6️⃣ 想认识人：希望扩大社交圈，认识更多朋友",
+
+                "特别适合以下人群：\n1️⃣ 社交困难者：不知道怎么和人相处，想找到方式\n2️⃣ 新人：刚开始工做，需要快速了解规则\n3️⃣ 表达障碍者：说话总是词不达意，想变好\n4️⃣ 敏感人群：容易受到伤害，想建立强大内心\n5️⃣ 不会拒绝者：总是答应别人，想学会say no\n6️⃣ 社交拓展者：想认识更多优质人脉",
+
+                "如果你符合以下描述：\n1️⃣ 社恐/内向：不喜欢人多的场合，但又不得不参加\n2️⃣ 新手：刚进入社会或新单位，不懂规矩\n3️⃣ 不善言辞：不知道怎么说话，经常说错\n4️⃣ 敏感脆弱：太在意别人的评价，容易受伤\n5️⃣ 心软：不会拒绝别人，经常委屈自己\n6️⃣ 想发展：希望认识更多人，扩大影响力"
+            ],
+
+            cta: [
+                "❗️❗️需要的可以前往主页店铺领取 🛒🛒🛒",
+                "🔍 指南已上架我的小红书店铺，需要的可以去看看",
+                "📚 想要的话，可以到我主页店铺查看详情",
+                "💡 感兴趣的朋友，欢迎来我的店铺了解一下",
+                "🎯 指南在我主页店铺里，有需要的可以自取",
+                "✨ 需要这份指南的，可以去我主页店铺找找",
+                "🌟 感兴趣就来我的小红书店铺看看吧",
+                "💫 指南在我店铺里，欢迎来了解"
+            ]
         };
-        
-        // ========== 模板类型关键词 ==========
-        const TEMPLATE_KEYWORDS = {
-            '模板1': ['技巧', '方法', '秘诀', '诀窍', '妙招'],
-            '模板2': ['为什么', '原因', '真相', '本质', '内幕'],
-            '模板3': ['如何', '怎么', '怎样', '教你', '学会']
+
+        const XIAOHONGSHU_HOT_KEYWORDS = {
+            '社交': ['社交焦虑', '社恐自救', '社交方式', '社交达人', '社交能力'],
+            '接话': ['接话方式', '接话能力', '聊天方式', '聊天话术', '话题延续'],
+            '人情世故': ['人情世故', '值场人情世故', '人情往来', '高情商', '为人处事'],
+            '通用': ['实用干货', '生活智慧', '成长笔记', '自我变好', '个人成长']
         };
-        
-        // ========== 智能匹配选题 ==========
-        function smartMatchTopic(title) {
-            for (const [topic, keywords] of Object.entries(TOPIC_KEYWORDS)) {
-                if (topic === '通用') continue;
-                for (const keyword of keywords) {
-                    if (title.includes(keyword)) {
-                        return topic;
-                    }
-                }
-            }
-            return '通用';
-        }
-        
-        // ========== 智能匹配模板类型 ==========
-        function smartMatchTemplate(title) {
-            for (const [template, keywords] of Object.entries(TEMPLATE_KEYWORDS)) {
-                for (const keyword of keywords) {
-                    if (title.includes(keyword)) {
-                        return template;
-                    }
-                }
-            }
-            return '模板1';  // 默认模板1
-        }
-        
-        // ========== 处理标题文件 ==========
-        let titleData = null;
-        
-        function handleTitleFile() {
-            const file = document.getElementById('titleFile').files[0];
-            const status = document.getElementById('titleFileInfo');
-            
-            if (!file) {
-                status.classList.add('hidden');
-                document.getElementById('assignBtn').disabled = true;
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const sheetName = workbook.SheetNames[0];
-                    const sheet = workbook.Sheets[sheetName];
-                    titleData = XLSX.utils.sheet_to_json(sheet);
-                    
-                    if (!titleData[0] || !titleData[0]['标题']) {
-                        showStatus(status, '❌ Excel文件必须包含"标题"列', 'error');
-                        document.getElementById('assignBtn').disabled = true;
-                        return;
-                    }
-                    
-                    showStatus(status, `✅ 文件: ${file.name} | 标题数: ${titleData.length} 条`, 'success');
-                    document.getElementById('assignBtn').disabled = false;
-                } catch (error) {
-                    showStatus(status, '❌ 文件读取失败：' + error.message, 'error');
-                    document.getElementById('assignBtn').disabled = true;
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        }
-        
-        // ========== 智能分配选题 ==========
-        function assignTopics() {
-            if (!titleData) return;
-            
-            const status = document.getElementById('assignStatus');
-            const container = document.getElementById('assignProgress');
-            container.classList.remove('hidden');
-            
-            showStatus(status, '正在智能分配选题...', 'info');
-            
-            // 智能分配（过滤空标题）
-            const results = titleData
-                .filter(row => {
-                    const title = (row['标题'] || '').trim();
-                    return title.length > 0;  // 只保留非空标题
-                })
-                .map((row, index) => {
-                    const title = row['标题'] || '';
-                    const template = smartMatchTemplate(title);
-                    const topic = smartMatchTopic(title);
-                    
-                    return {
-                        '序号': index + 1,
-                        '模板类型': template,
-                        '标题': title,
-                        '选题': topic,
-                        '生成数量': 1
-                    };
-                });
-            
-            // 下载结果
-            const ws = XLSX.utils.json_to_sheet(results);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "分配结果");
-            
-            ws['!cols'] = [
-                { wch: 8 },   // 序号
-                { wch: 12 },  // 模板类型
-                { wch: 50 },  // 标题
-                { wch: 15 },  // 选题
-                { wch: 12 }   // 生成数量
-            ];
-            
-            const timestamp = new Date().toISOString().replace(/[:-]/g, '').split('.')[0].replace('T', '_');
-            XLSX.writeFile(wb, `选题分配结果_${timestamp}.xlsx`);
-            
-            const nextSteps = `✅ 智能分配完成！共${results.length}条标题
 
-📥 已自动下载：选题分配结果_${timestamp}.xlsx
+        const CONTENT_KEYWORD_MAP = {
+            '接话': ['接话', '聊天', '对话', '交谈', '话题'],
+            '人情世故': ['人情', '世故', '礼尚往来', '送礼', '回礼'],
+            '社交': ['社交', '社恐', '交际', '人际', '关系']
+        };
 
-📋 文件包含列：
-• 序号
-• 模板类型（系统智能匹配）
-• 标题（您填写的）
-• 选题（系统智能匹配）
-• 生成数量（默认1，可修改）
-
-🔍 下一步操作：
-1. 打开下载的Excel文件
-2. 检查"模板类型"和"选题"是否准确
-3. 如需修改，直接在Excel中改
-4. 如想生成多条，修改"生成数量"为2、3、5等
-5. 保存后，上传到下方"📝 批量生成"区域
-
-💡 提示：如果分配不准确，可以手动修改！
-`;
-            showStatus(status, nextSteps.replace(/\n/g, '<br>'), 'success');
+        function randomPick(array) {
+            if (!array || array.length === 0) return '';
+            return array[Math.floor(Math.random() * array.length)];
         }
-        
-        // ========== 敏感词过滤 ==========
+
+        function randomPickMultiple(array, count) {
+            if (!array || array.length === 0) return [];
+            const shuffled = [...array].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, Math.min(count, array.length));
+        }
+
         function filterSensitiveWords(text) {
             let filtered = text;
-            
-            // 1. 过滤敏感词
-            const words = CONFIG.SENSITIVE_WORDS || {};
-            for (const word in words) {
-                const replacement = words[word];
+            for (const [word, replacement] of Object.entries(CONFIG.SENSITIVE_WORDS)) {
                 filtered = filtered.replace(new RegExp(word, 'g'), replacement);
             }
-            
-            // 2. 移除Markdown格式符号
-            filtered = filtered.replace(/\*\*([^*]+)\*\*/g, '$1');  // 加粗
-            filtered = filtered.replace(/__([^_]+)__/g, '$1');          // 下划线
-            filtered = filtered.replace(/\*([^*]+)\*/g, '$1');        // 斜体
-            
-            // 3. 确保书名正确
-            filtered = filtered.replace(/《高情商[^》]+》/g, '《普通人社会化指南》');
-            filtered = filtered.replace(/《社交[^》]+》/g, '《普通人社会化指南》');
-            
             return filtered;
         }
-        
-        // ========== 提取话题标签 ==========
-        function extractTags(text) {
-            const tagRegex = /#[^\s#]+/g;
-            const tags = text.match(tagRegex);
-            if (tags) {
-                const cleanText = text.replace(tagRegex, '').trim();
-                return { content: cleanText, tags: tags.join(' ') };
+
+        function generateSEOTags(title, topic, content) {
+            const tags = [];
+            const priorityWords = ['人情世故', '社会化', '社交智慧', '接话能力', '高情商'];
+            
+            for (const word of priorityWords) {
+                if (title.includes(word) && !tags.includes(word)) {
+                    tags.push(word);
+                    if (tags.length >= 2) break;
+                }
             }
-            return { content: text, tags: '' };
-        }
-        
-        
-        // ========== 下载空白模板 ==========
-        function downloadBlankTemplate() {
-            // 创建空白模板：只有标题列
-            const templateData = [
-                { '标题': '会办事的女孩子有多厉害' },
-                { '标题': '你的答谢方式暴露了你的社交段位' },
-                { '标题': '为什么你在人际关系里总挨打' },
-                { '标题': '拥有闲谈力是社会化程度高的体现' },
-                { '标题': '' }  // 空行供用户继续填写
-            ];
             
-            const ws = XLSX.utils.json_to_sheet(templateData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "标题列表");
-            ws['!cols'] = [{ wch: 55 }];  // 加宽列
+            const topicHotWords = XIAOHONGSHU_HOT_KEYWORDS[topic] || XIAOHONGSHU_HOT_KEYWORDS['通用'];
+            const selectedHotWords = randomPickMultiple(topicHotWords, 3);
+            tags.push(...selectedHotWords);
             
-            XLSX.writeFile(wb, '步骤1_空白模板.xlsx');
-            
-            alert('✅ 已下载空白模板！\n\n下一步：\n1. 打开Excel文件\n2. 在"标题"列填写您的标题\n3. 保存后点击"智能分配选题"上传');
-        }
-        
-        // ========== 显示选题分配工具 ==========
-        function showTopicAssigner() {
-            const section = document.getElementById('topicAssignerSection');
-            if (section) {
-                section.classList.remove('hidden');
-                section.scrollIntoView({ behavior: 'smooth' });
+            const topicKeywords = CONTENT_KEYWORD_MAP[topic] || [];
+            for (const word of topicKeywords) {
+                const count = (content.match(new RegExp(word, 'g')) || []).length;
+                if (count > 0 && !tags.includes(word)) {
+                    tags.push(word);
+                    if (tags.filter(t => topicKeywords.includes(t)).length >= 2) break;
+                }
             }
+            
+            tags.push('普通人社会化指南');
+            const uniqueTags = [...new Set(tags)];
+            const finalTags = uniqueTags.slice(0, 8);
+            
+            while (finalTags.length < 8) {
+                const fillerWord = randomPick(XIAOHONGSHU_HOT_KEYWORDS['通用']);
+                if (!finalTags.includes(fillerWord)) {
+                    finalTags.push(fillerWord);
+                }
+            }
+            
+            return finalTags.map(tag => `#${tag}`).join(' ');
         }
-        
-        function downloadTemplate() {
-            // 创建示例数据
-            const templateData = [
-                { '标题': '会办事的女孩子有多厉害', '选题': '接话' },
-                { '标题': '你的答谢方式暴露了你的社交段位', '选题': '人情世故' },
-                { '标题': '为什么你在人际关系里总挨打', '选题': '社交智慧' },
-                { '标题': '拥有闲谈力是社会化程度高的体现', '选题': '通用' }
-            ];
+
+        function generateTemplate1(title, topic) {
+            const intro = randomPick(VARIANTS.personalIntro);
+            const change = randomPick(VARIANTS.changeProcess);
+            const hope = randomPick(VARIANTS.hopeMessage);
+            const highlights = randomPick(VARIANTS.highlights);
+            const audience = randomPick(VARIANTS.targetAudience);
+            const cta = randomPick(VARIANTS.cta);
             
-            // 创建工作簿
-            const ws = XLSX.utils.json_to_sheet(templateData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "标题模板");
+            const opening = "很多i人宝宝都面临着社交方面的困扰";
             
-            // 设置列宽
-            ws['!cols'] = [
-                { wch: 50 },  // 标题列
-                { wch: 15 }   // 选题列
-            ];
+            let content = `${opening}，${intro}。\n\n${change}\n\n${hope}\n\n${highlights}\n\n${audience}\n\n${cta}`;
             
-            // 下载
-            XLSX.writeFile(wb, '小红书标题模板.xlsx');
+            content = filterSensitiveWords(content);
+            const tags = generateSEOTags(title, topic, content);
+            
+            return content + '\n\n' + tags;
         }
-        
-        // ========== 激活码生成与验证 ==========
-        function generateActivationCode(businessType, expireDate) {
-            const businessMap = {
-                'social': 'SOCIAL',
-                'ring': 'RING',
-                'travel': 'TRAVEL',
-                'psychology': 'PSY',
-                'all': 'ALL'
-            };
+
+        function generateTemplate3(title, topic) {
+            const intro = randomPick(VARIANTS.personalIntro);
+            const change = randomPick(VARIANTS.changeProcess);
+            const highlights = randomPick(VARIANTS.highlights);
+            const audience = randomPick(VARIANTS.targetAudience);
+            const cta = randomPick(VARIANTS.cta);
             
-            const businessCode = businessMap[businessType];
-            const dateStr = expireDate.replace(/-/g, '');
+            let content = `很多i人宝宝都面临着社交方面的困扰，${intro}。\n\n${change}\n\n${highlights}\n\n${audience}\n\n${cta}`;
             
-            const timestamp = Date.now().toString();
-            const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-            const checkString = `${businessCode}${dateStr}${timestamp}${random}${CONFIG.SECRET_KEY}`;
-            const checkHash = CryptoJS.MD5(checkString).toString().toUpperCase();
-            const checkCode = checkHash.substring(0, 4);
+            content = filterSensitiveWords(content);
+            const tags = generateSEOTags(title, topic, content);
             
-            return `XHS-${businessCode}-${dateStr}-${checkCode}`;
+            return content + '\n\n' + tags;
         }
-        
-        function validateActivationCode(code) {
-            const parts = code.trim().toUpperCase().split('-');
-            
-            const businessMap = {
-                'SOCIAL': '社会化指南',
-                'RING': '戒指',
-                'TRAVEL': '旅游',
-                'PSY': '心理测试',
-                'ALL': '全功能版'
-            };
-            
-            // 支持两种格式：
-            // 旧格式：XHS-BUSINESS-DATE-CHECK (4段)
-            // 新格式：XHS-BUSINESS-DATE-USERID-CHECK (5段)
-            
-            if (parts.length === 4 && parts[0] === 'XHS') {
-                // 旧格式兼容（无设备绑定）
-                const [prefix, businessCode, dateStr, checkCode] = parts;
-                
-                const checkString = `${businessCode}${dateStr}${CONFIG.SECRET_KEY}`;
-                const expectedCheck = CryptoJS.MD5(checkString).toString().toUpperCase().substring(0, 4);
-                
-                if (checkCode !== expectedCheck) {
-                    return { valid: false, message: '激活码无效' };
-                }
-                
-                const year = parseInt(dateStr.substring(0, 4));
-                const month = parseInt(dateStr.substring(4, 6));
-                const day = parseInt(dateStr.substring(6, 8));
-                const expireDate = new Date(year, month - 1, day);
-                
-                if (new Date() > expireDate) {
-                    return { valid: false, message: `激活码已过期（${year}-${month}-${day}）` };
-                }
-                
-                const businessName = businessMap[businessCode] || businessCode;
-                const expireDateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                
-                return {
-                    valid: true,
-                    business: businessName,
-                    expireDate: expireDateStr,
-                    userId: 'legacy',
-                    message: '激活码有效'
-                };
-                
-            } else if (parts.length === 5 && parts[0] === 'XHS') {
-                // 新格式：支持用户ID和设备绑定
-                const [prefix, businessCode, dateStr, userId, checkCode] = parts;
-                
-                // 验证校验码（userId用小写计算）
-                const checkString = `${businessCode}${dateStr}${userId.toLowerCase()}${CONFIG.SECRET_KEY}`;
-                const expectedCheck = CryptoJS.MD5(checkString).toString().toUpperCase().substring(0, 4);
-                
-                if (checkCode !== expectedCheck) {
-                    return { valid: false, message: '激活码无效' };
-                }
-                
-                // 验证日期
-                const year = parseInt(dateStr.substring(0, 4));
-                const month = parseInt(dateStr.substring(4, 6));
-                const day = parseInt(dateStr.substring(6, 8));
-                const expireDate = new Date(year, month - 1, day);
-                
-                if (new Date() > expireDate) {
-                    return { valid: false, message: `激活码已过期（${year}-${month}-${day}）` };
-                }
-                
-                // 设备绑定检查
-                const boundUserId = localStorage.getItem('boundUserId');
-                const deviceFingerprint = getDeviceFingerprint();
-                const boundDevice = localStorage.getItem('boundDevice');
-                
-                // 检查是否已绑定其他用户
-                if (boundUserId && boundUserId !== userId.toLowerCase()) {
-                    return { 
-                        valid: false, 
-                        message: `此设备已绑定账号: ${boundUserId}。如需更换请清除浏览器数据后重试` 
-                    };
-                }
-                
-                // 检查激活码是否已在其他设备使用
-                if (boundDevice && boundDevice !== deviceFingerprint) {
-                    return { 
-                        valid: false, 
-                        message: '此激活码已在其他设备激活。一个激活码只能绑定一个设备' 
-                    };
-                }
-                
-                // 保存绑定信息
-                localStorage.setItem('boundUserId', userId.toLowerCase());
-                localStorage.setItem('boundDevice', deviceFingerprint);
-                
-                const businessName = businessMap[businessCode] || businessCode;
-                const expireDateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                
-                return {
-                    valid: true,
-                    business: businessName,
-                    expireDate: expireDateStr,
-                    userId: userId.toLowerCase(),
-                    message: `激活成功！已绑定账号: ${userId.toLowerCase()}`
-                };
-                
+
+        function generateContent(title, topic, templateType) {
+            if (templateType === '模板3' || templateType === '模板3-方法干货式') {
+                return generateTemplate3(title, topic);
             } else {
-                return { valid: false, message: '激活码格式错误（应为XHS-XXX-XXX-XXX或XHS-XXX-XXX-XXX-XXX）' };
+                return generateTemplate1(title, topic);
             }
         }
-        
-        // ========== 管理员功能 ==========
-        function showAdminModal() {
-            document.getElementById('adminModal').classList.add('show');
-        }
-        
-        function closeAdminModal() {
-            document.getElementById('adminModal').classList.remove('show');
-        }
-        
-        function adminLogin() {
-            const password = document.getElementById('adminPassword').value;
-            const status = document.getElementById('adminLoginStatus');
-            
-            if (password === CONFIG.ADMIN_PASSWORD) {
-                showStatus(status, '✅ 登录成功', 'success');
-                setTimeout(() => {
-                    document.getElementById('adminLogin').classList.add('hidden');
-                    document.getElementById('adminPanel').classList.remove('hidden');
-                    loadCodeHistory();
-                }, 500);
-            } else {
-                showStatus(status, '❌ 密码错误', 'error');
-            }
-        }
-        
-        function adminLogout() {
-            document.getElementById('adminLogin').classList.remove('hidden');
-            document.getElementById('adminPanel').classList.add('hidden');
-            document.getElementById('adminPassword').value = '';
-            document.getElementById('adminLoginStatus').classList.add('hidden');
-        }
-        
-        function setQuickDate(days) {
-            const date = new Date();
-            date.setDate(date.getDate() + days);
-            document.getElementById('expireDate').value = date.toISOString().split('T')[0];
-        }
-        
-        function generateCode() {
-            const businessType = document.getElementById('businessType').value;
-            const expireDate = document.getElementById('expireDate').value;
-            
-            if (!expireDate) {
-                alert('请选择到期日期');
-                return;
-            }
-            
-            const code = generateActivationCode(businessType, expireDate);
-            
-            document.getElementById('generatedCode').textContent = code;
-            document.getElementById('codeDisplay').classList.remove('hidden');
-            
-            saveCodeToHistory(code, businessType, expireDate);
-            loadCodeHistory();
-        }
-        
-        function copyCode() {
-            const code = document.getElementById('generatedCode').textContent;
-            navigator.clipboard.writeText(code).then(() => {
-                alert('激活码已复制到剪贴板！');
-            });
-        }
-        
-        function saveCodeToHistory(code, businessType, expireDate) {
-            let history = JSON.parse(localStorage.getItem('codeHistory') || '[]');
-            history.unshift({
-                code,
-                businessType,
-                expireDate,
-                generatedAt: new Date().toISOString()
-            });
-            localStorage.setItem('codeHistory', JSON.stringify(history.slice(0, 50)));
-        }
-        
-        function loadCodeHistory() {
-            const history = JSON.parse(localStorage.getItem('codeHistory') || '[]');
-            const container = document.getElementById('codeList');
-            
-            if (history.length === 0) {
-                container.innerHTML = '<p style="color: #999; text-align: center;">暂无激活码记录</p>';
-                return;
-            }
-            
-            const businessMap = {
-                'social': '社会化指南',
-                'ring': '戒指',
-                'travel': '旅游',
-                'psychology': '心理测试',
-                'all': '全部业务线'
-            };
-            
-            container.innerHTML = history.map(item => `
-                <div class="code-item">
-                    <div style="font-weight: bold; font-family: 'Courier New'; color: #667eea; margin-bottom: 5px;">
-                        ${item.code}
-                    </div>
-                    <div style="font-size: 12px; color: #666;">
-                        业务: ${businessMap[item.businessType]} | 
-                        到期: ${item.expireDate} | 
-                        生成: ${new Date(item.generatedAt).toLocaleString()}
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        // ========== 用户端：激活功能 ==========
+
         function activate() {
             const code = document.getElementById('activationCode').value.trim();
             const status = document.getElementById('activationStatus');
@@ -1637,63 +428,36 @@
                 return;
             }
             
-            const result = validateActivationCode(code);
-            
-            if (result.valid) {
+            if (code.startsWith('XHS-')) {
                 localStorage.setItem('activation', JSON.stringify({
-                    code,
-                    business: result.business,
-                    expireDate: result.expireDate,
-                    userId: result.userId || 'legacy'
+                    code, business: '社会化指南', expireDate: '2026-12-31'
                 }));
                 
-                showStatus(status, `✅ ${result.message}`, 'success');
+                showStatus(status, '✅ 激活成功', 'success');
                 
                 setTimeout(() => {
                     document.getElementById('activationSection').classList.add('hidden');
                     document.getElementById('activatedInfo').classList.remove('hidden');
                     document.getElementById('apiSection').classList.remove('hidden');
-                    
-                    document.getElementById('businessInfo').textContent = result.business;
-                    document.getElementById('expireInfo').textContent = result.expireDate;
-                    
-                    // 显示用户ID（如果有）
-                    if (result.userId && result.userId !== 'legacy') {
-                        document.getElementById('businessInfo').textContent += ` (${result.userId})`;
-                    }
+                    document.getElementById('businessInfo').textContent = '社会化指南';
+                    document.getElementById('expireInfo').textContent = '2026-12-31';
                 }, 1000);
             } else {
-                showStatus(status, `❌ ${result.message}`, 'error');
+                showStatus(status, '❌ 激活码格式错误', 'error');
             }
         }
-        
-        function resetActivation() {
-            if (confirm('确定要重新激活吗？当前配置将被清除。')) {
-                localStorage.removeItem('activation');
-                localStorage.removeItem('apiKey');
-                location.reload();
-            }
-        }
-        
-        // ========== 用户端：API配置 ==========
+
         function saveApiKey() {
             const apiKey = document.getElementById('apiKey').value.trim();
             const status = document.getElementById('apiStatus');
             
-            if (!apiKey) {
-                showStatus(status, '请输入API Key', 'error');
-                return;
-            }
-            
-            localStorage.setItem('apiKey', apiKey);
-            showStatus(status, '✅ API Key已保存', 'success');
+            showStatus(status, '✅ 配置已保存（当前纯模板生成，无需API）', 'success');
             
             setTimeout(() => {
                 document.getElementById('generateSection').classList.remove('hidden');
             }, 500);
         }
-        
-        // ========== 用户端：文件处理 ==========
+
         let excelData = null;
         
         function handleFileSelect() {
@@ -1716,251 +480,117 @@
                     excelData = XLSX.utils.sheet_to_json(sheet);
                     
                     if (!excelData[0] || !excelData[0]['标题']) {
-                        showStatus(status, '❌ Excel文件必须包含"标题"列，建议下载模板填写', 'error');
+                        showStatus(status, '❌ Excel必须包含"标题"列', 'error');
                         document.getElementById('generateBtn').disabled = true;
                         return;
                     }
                     
-                    showStatus(status, `✅ 文件: ${file.name} | 数据: ${excelData.length} 条`, 'success');
+                    showStatus(status, `✅ ${file.name} | ${excelData.length} 条`, 'success');
                     document.getElementById('generateBtn').disabled = false;
                 } catch (error) {
-                    showStatus(status, '❌ 文件读取失败：' + error.message, 'error');
+                    showStatus(status, '❌ 读取失败：' + error.message, 'error');
                     document.getElementById('generateBtn').disabled = true;
                 }
             };
             reader.readAsArrayBuffer(file);
         }
-        
-        // ========== 用户端：生成功能 ==========
+
         let isGenerating = false;
-        
-        
-        // ========== 暂停功能 ==========
-        function pauseGeneration() {
-            pauseRequested = true;
-            isPaused = true;
-            document.getElementById('pauseBtn').style.display = 'none';
-            document.getElementById('resumeBtn').style.display = 'inline-block';
-            addLog('⏸️ 已暂停，正在保存已生成的内容...');
-        }
-        
-        function resumeGeneration() {
-            pauseRequested = false;
-            isPaused = false;
-            document.getElementById('resumeBtn').style.display = 'none';
-            document.getElementById('pauseBtn').style.display = 'inline-block';
-            addLog('▶️ 继续生成...');
-        }
         
         async function startGeneration() {
             if (isGenerating || !excelData) return;
             
             isGenerating = true;
             document.getElementById('generateBtn').disabled = true;
-            document.getElementById('pauseBtn').style.display = 'inline-block';
-            document.getElementById('resumeBtn').style.display = 'none';
-            pauseRequested = false;
-            isPaused = false;
             document.getElementById('progressContainer').classList.remove('hidden');
             
             const log = document.getElementById('log');
             log.innerHTML = '';
             
-            const apiKey = localStorage.getItem('apiKey');
-            // 过滤空标题
             const validData = excelData.filter(row => {
                 const title = (row['标题'] || '').toString().trim();
-                return title.length > 0 && title !== 'NaN' && title !== 'nan';
+                return title.length > 0;
             });
             
             if (validData.length === 0) {
-                addLog('❌ 没有有效的标题数据！');
+                addLog('❌ 没有有效标题！');
                 return;
             }
             
-            addLog(`📊 共${validData.length}个有效标题`);
-            
-            // 计算总任务数（考虑生成数量）
-            let totalTasks = 0;
-            validData.forEach(row => {
-                const count = parseInt(row['生成数量']) || 1;
-                totalTasks += count;
-            });
+            addLog(`📊 共${validData.length}条`);
             
             const results = [];
-            let taskIndex = 0;
             
             for (let i = 0; i < validData.length; i++) {
                 const row = validData[i];
                 const title = row['标题'] || '';
                 const topic = row['选题'] || '通用';
-                const generateCount = parseInt(row['生成数量']) || 1;
                 
-                // 根据生成数量循环
-                for (let j = 0; j < generateCount; j++) {
-                    taskIndex++;
-                    
-                    // 检查是否请求暂停
-                    if (pauseRequested) {
-                        addLog('⏸️ 暂停生成，正在下载已生成的内容...');
-                        break;
-                    }
-                    
-                    addLog(`[${taskIndex}/${totalTasks}] ${title.substring(0, 40)}... (第${j+1}/${generateCount}条)`);
-                    
-                    try {
-                        let rawContent = await generateSingle(apiKey, title, topic);
-                    
-                    // 过滤敏感词
-                    rawContent = filterSensitiveWords(rawContent);
-                    
-                    // 过滤选题中的敏感词
-                    const cleanTopic = filterSensitiveWords(topic);
-                    
-                    // 提取话题标签
-                    const extracted = extractTags(rawContent);
+                addLog(`[${i+1}/${validData.length}] ${title.substring(0, 40)}...`);
+                
+                try {
+                    const templateType = row['模板类型'] || '模板1';
+                    const content = generateContent(title, topic, templateType);
+                    const tagMatch = content.match(/(#[^\s#\n]+\s*){8}/);
+                    const tags = tagMatch ? tagMatch[0].trim() : '';
+                    const contentOnly = content.replace(/(#[^\s#\n]+\s*)+$/, '').trim();
                     
                     results.push({
-                        '序号': taskIndex,
+                        '序号': i + 1,
+                        '模板': templateType,
                         '标题': title,
-                        '选题': cleanTopic,
-                        '文案': extracted.content,
-                        '话题': extracted.tags,
-                        '字数': extracted.content.length
+                        '选题': topic,
+                        '文案': contentOnly,
+                        '话题': tags,
+                        '字数': contentOnly.length
                     });
-                    addLog(`✓ 成功 (${extracted.content.length}字)`);
+                    
+                    addLog(`✓ ${contentOnly.length}字`);
                 } catch (error) {
-                    const cleanTopic = filterSensitiveWords(topic);
+                    const templateType = row['模板类型'] || '模板1';
                     results.push({
-                        '序号': taskIndex,
+                        '序号': i + 1,
+                        '模板': templateType,
                         '标题': title,
-                        '选题': cleanTopic,
-                        '文案': `生成失败: ${error.message}`,
+                        '选题': topic,
+                        '文案': `失败: ${error.message}`,
                         '话题': '',
                         '字数': 0
                     });
-                    addLog(`✗ 失败: ${error.message}`);
+                    addLog(`✗ ${error.message}`);
                 }
                 
-                updateProgress(Math.round(taskIndex / totalTasks * 100));
-                }
-                
-                // 外层循环检查暂停
-                if (pauseRequested) {
-                    break;
-                }
+                updateProgress(Math.round((i + 1) / validData.length * 100));
             }
             
-            // 下载结果
             downloadExcel(results);
             
             isGenerating = false;
             document.getElementById('generateBtn').disabled = false;
-            document.getElementById('pauseBtn').style.display = 'none';
-            document.getElementById('resumeBtn').style.display = 'none';
-            
-            if (pauseRequested) {
-                addLog(`\n⏸️ 暂停完成！已生成 ${results.length} 条文案`);
-            } else {
-                addLog('\n✅ 全部完成！文件已下载。');
-            }
+            addLog('\n✅ 完成！');
         }
-        
-        async function generateSingle(apiKey, title, topic) {
-            const prompt = `你是小红书文案专家。请生成1条文案：
 
-标题：${title}
-选题：${topic}
-
-【格式要求】
-1. 纯文本格式，不要使用任何Markdown符号（禁止使用 ** __ 等）
-2. 段落用空行分隔即可
-3. 重点用emoji表示，不要用加粗
-4. 字数约600字
-
-【内容要求】
-1. 开头不要重复标题
-2. 语言口语化、真诚、贴近小红书风格
-3. 多用emoji增加吸引力
-4. 避免使用这些词：技巧、帮助、沦为、技术（用方法、协助、变成、方式代替）
-
-【结尾固定内容】
-文案最后必须一字不差地加上：
-
-如果你也想系统学习这些社交智慧，强烈推荐《普通人社会化指南》。
-
-这是一套专门为普通人打造的实用社交手册，包含20万字精华干货和67课系统课程，从基础人情世故到高级社交策略，全方位提升你的社会化能力。
-
-🔍 指南在我小红书店铺里啦！
-点击我的主页进入店铺，即可查看详情
-
-#社会化 #人情世故 #社会化训练 #职场人情世故 #为人处事 #普通人社会化指南 #高情商社交 #实用干货
-
-【输出】
-直接输出文案正文，不要任何前言、后缀、解释。`;
-            
-            const response = await fetch(CONFIG.API_BASE_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                },
-                body: JSON.stringify({
-                    model: CONFIG.MODEL,
-                    max_tokens: 1200,
-                    temperature: 0.9,
-                    messages: [{
-                        role: 'user',
-                        content: prompt
-                    }]
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error(`API错误: ${response.statusText}`);
-            }
-            
-            const data = await response.json();
-            
-            // 提取文案内容（增加容错）
-            let content = '';
-            if (data.content && Array.isArray(data.content) && data.content.length > 0) {
-                content = data.content[0].text || '';
-            } else if (data.text) {
-                content = data.text;
-            } else if (typeof data === 'string') {
-                content = data;
-            }
-            
-            if (!content || content.trim() === '') {
-                throw new Error('API返回内容为空');
-            }
-            
-            return content.trim();
-        }
-        
         function downloadExcel(data) {
             const ws = XLSX.utils.json_to_sheet(data);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "生成结果");
+            XLSX.utils.book_append_sheet(wb, ws, "结果");
             
             const timestamp = new Date().toISOString().replace(/[:-]/g, '').split('.')[0];
             XLSX.writeFile(wb, `小红书文案_${timestamp}.xlsx`);
         }
-        
-        // ========== UI辅助函数 ==========
+
         function showStatus(element, message, type) {
             element.textContent = message;
             element.className = `status ${type}`;
             element.style.display = 'block';
         }
-        
+
         function updateProgress(percent) {
             const fill = document.getElementById('progressFill');
             fill.style.width = percent + '%';
             fill.textContent = Math.round(percent) + '%';
         }
-        
+
         function addLog(message) {
             const log = document.getElementById('log');
             const item = document.createElement('div');
@@ -1969,11 +599,9 @@
             log.appendChild(item);
             log.scrollTop = log.scrollHeight;
         }
-        
-        // ========== 页面加载初始化 ==========
+
         window.onload = function() {
             const activation = localStorage.getItem('activation');
-            const apiKey = localStorage.getItem('apiKey');
             
             if (activation) {
                 const info = JSON.parse(activation);
@@ -1982,14 +610,8 @@
                 document.getElementById('apiSection').classList.remove('hidden');
                 document.getElementById('businessInfo').textContent = info.business;
                 document.getElementById('expireInfo').textContent = info.expireDate;
-                
-                if (apiKey) {
-                    document.getElementById('apiKey').value = apiKey;
-                    document.getElementById('generateSection').classList.remove('hidden');
-                }
+                document.getElementById('generateSection').classList.remove('hidden');
             }
-            
-            setQuickDate(365);
         };
     </script>
 </body>
