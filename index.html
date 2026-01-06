@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小红书文案生成器</title>
+    <title>小红书文案生成器 - 完整版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -15,7 +14,7 @@
             padding: 20px;
         }
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
@@ -27,20 +26,52 @@
             color: white;
             padding: 30px;
             text-align: center;
+            position: relative;
         }
-        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header h1 { font-size: 32px; margin-bottom: 8px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .header .back-btn {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .header .help-btn {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
         .content { padding: 30px; }
         .section {
             background: #f8f9fa;
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
+            border-left: 4px solid #667eea;
         }
         .section-title {
             font-size: 18px;
             font-weight: bold;
             margin-bottom: 15px;
             color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .form-group { margin-bottom: 15px; }
         label {
@@ -59,6 +90,11 @@
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 14px;
+            transition: border 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
         }
         .btn {
             padding: 12px 24px;
@@ -75,11 +111,28 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
         .status {
             padding: 15px;
             border-radius: 8px;
             margin-top: 15px;
+            font-size: 14px;
         }
         .status.success {
             background: #d4edda;
@@ -91,14 +144,25 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
         .hidden { display: none !important; }
         .progress-container { margin-top: 20px; }
         .progress-bar {
             width: 100%;
-            height: 30px;
+            height: 35px;
             background: #e0e0e0;
-            border-radius: 15px;
+            border-radius: 18px;
             overflow: hidden;
+            position: relative;
         }
         .progress-fill {
             height: 100%;
@@ -108,7 +172,7 @@
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 12px;
+            font-size: 14px;
             font-weight: bold;
         }
         .log {
@@ -116,74 +180,315 @@
             padding: 15px;
             background: #f8f9fa;
             border-radius: 8px;
-            max-height: 300px;
+            max-height: 400px;
             overflow-y: auto;
             font-family: 'Courier New', monospace;
-            font-size: 12px;
+            font-size: 13px;
             line-height: 1.8;
         }
         .log-item {
             margin-bottom: 5px;
-            padding: 5px;
+            padding: 8px;
             border-left: 3px solid #667eea;
-            padding-left: 10px;
+            padding-left: 12px;
+            background: white;
+            border-radius: 4px;
+        }
+        .log-item.success { border-left-color: #28a745; }
+        .log-item.error { border-left-color: #dc3545; }
+        .feature-box {
+            background: #fff9e6;
+            border: 2px dashed #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .feature-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .feature-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .feature-box li {
+            padding: 5px 0;
+            color: #856404;
+            font-size: 14px;
+        }
+        .feature-box li:before {
+            content: "✓ ";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .help-page {
+            padding: 40px;
+            background: white;
+        }
+        .help-page h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .help-page h3 {
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .help-page p, .help-page li {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+        .help-page code {
+            background: #f8f9fa;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #e83e8c;
+        }
+        .step-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .api-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .api-link:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🎨 小红书文案生成器</h1>
-            <p>v3.0 - 2个模板 + 变体系统</p>
+        <!-- 主页面 -->
+        <div id="mainPage">
+            <div class="header">
+                <button class="help-btn" onclick="showHelp()">📖 使用说明</button>
+                <h1>🎨 小红书文案生成器</h1>
+                <p>网页版 v2.0 - 专业、高效、易用</p>
+            </div>
+            
+            <div class="content">
+                <!-- 激活区域 -->
+                <div class="section" id="activationSection">
+                    <div class="section-title">🔑 软件激活</div>
+                    <div class="form-group">
+                        <label>激活码</label>
+                        <input type="text" id="activationCode" placeholder="XHS-ALL-20261231-7BF5">
+                    </div>
+                    <button class="btn btn-primary" onclick="activate()">激活软件</button>
+                    <div class="status hidden" id="activationStatus"></div>
+                </div>
+                
+                <!-- 已激活信息 -->
+                <div class="section hidden" id="activatedInfo">
+                    <div class="section-title">✅ 已激活</div>
+                    <p>业务线: <strong><span id="businessInfo"></span></strong></p>
+                    <p>到期时间: <strong><span id="expireInfo"></span></strong></p>
+                    <button class="btn btn-secondary" onclick="resetActivation()">重新激活</button>
+                </div>
+                
+                <!-- API配置 -->
+                <div class="section hidden" id="apiSection">
+                    <div class="section-title">⚙️ API配置</div>
+                    <div class="status info">
+                        <strong>🔔 第一步：注册并购买API</strong><br>
+                        本工具需要配合GPTs API使用，请先注册并充值：<br>
+                        官方网站：<a href="https://gptsapi.net/api" target="_blank" class="api-link">https://gptsapi.net/api</a><br>
+                        <strong>注册流程：</strong>1. 点击上方链接注册账号 → 2. 充值（建议¥5起，可生成约50条） → 3. 获取API Key<br>
+                        <strong>费用说明：</strong>约¥0.1/条文案，50条约¥5，不需要担心，国内可用
+                    </div>
+                    <div class="form-group">
+                        <label>GPTs API Key</label>
+                        <input type="password" id="apiKey" placeholder="sk-xxxxxxxxxxxxxxxx">
+                    </div>
+                    <button class="btn btn-primary" onclick="saveApiKey()">保存配置</button>
+                    <div class="status hidden" id="apiStatus"></div>
+                </div>
+                
+                <!-- 步骤1：智能分配选题 -->
+                <div class="section hidden" id="assignSection">
+                    <div class="section-title">🔍 步骤1：智能分配选题</div>
+                    
+                    <div class="feature-box">
+                        <h4>💡 完整流程说明</h4>
+                        <ul>
+                            <li><strong>步骤1：</strong> 智能分配选题</li>
+                            <li style="padding-left: 20px;">下载空白模板 → 填写标题 → 上传获取智能分配结果</li>
+                            <li><strong>步骤2：</strong> 批量生成文案</li>
+                            <li style="padding-left: 20px;">上传分配结果 → 开始生成 → 下载最终文案</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="step-box">
+                        <strong>📋 操作流程：</strong><br>
+                        ① 下载空白模板 → ② 填写标题列 → ③ 上传智能分配 → ④ 下载分配结果
+                    </div>
+                    
+                    <div class="status info">
+                        <strong>空白模板格式：</strong>只有"标题"列<br>
+                        <strong>分配结果格式：</strong>序号、模板类型、标题、选题、生成数量
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="downloadBlankTemplate()">📥 1. 下载空白模板</button>
+                        <button class="btn btn-warning" onclick="document.getElementById('assignFile').click()">📤 2. 智能分配选题</button>
+                    </div>
+                    <input type="file" id="assignFile" accept=".xlsx,.xls" style="display:none" onchange="handleAssignFile()">
+                    
+                    <div class="status hidden" id="assignFileInfo"></div>
+                    <div class="hidden" id="assignProgress">
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="assignProgressFill">0%</div>
+                            </div>
+                            <div class="log" id="assignLog"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 步骤2：批量生成 -->
+                <div class="section hidden" id="generateSection">
+                    <div class="section-title">📝 步骤2：批量生成文案</div>
+                    
+                    <div class="status warning">
+                        <strong>⚠️ 温馨提示：</strong>请使用<button class="btn btn-primary" style="padding:4px 8px;font-size:12px;margin:0 5px;" onclick="downloadStandardTemplate()">📥 下载标准模板</button>填写后上传，避免格式错误
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>上传标题Excel文件</label>
+                        <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="handleFileSelect()">
+                        <div class="status hidden" id="fileInfo"></div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="generateBtn" onclick="startGeneration()" disabled>开始生成</button>
+                        <button class="btn btn-warning hidden" id="pauseBtn" onclick="pauseGeneration()">⏸️ 暂停</button>
+                        <button class="btn btn-secondary hidden" id="resumeBtn" onclick="resumeGeneration()">▶️ 继续</button>
+                    </div>
+                    
+                    <div class="progress-container hidden" id="progressContainer">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill">0%</div>
+                        </div>
+                        <div class="log" id="log"></div>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <div class="content">
-            <div class="section" id="activationSection">
-                <div class="section-title">🔑 软件激活</div>
-                <div class="form-group">
-                    <label>激活码</label>
-                    <input type="text" id="activationCode" placeholder="XHS-ALL-20261231-7BF5">
-                </div>
-                <button class="btn btn-primary" onclick="activate()">激活软件</button>
-                <div class="status hidden" id="activationStatus"></div>
+        <!-- 帮助页面 -->
+        <div id="helpPage" class="hidden">
+            <div class="header">
+                <button class="back-btn" onclick="showMain()">← 返回主页</button>
+                <h1>📖 使用说明</h1>
+                <p>详细操作指南</p>
             </div>
-            
-            <div class="section hidden" id="activatedInfo">
-                <div class="section-title">✅ 已激活</div>
-                <p>业务线: <span id="businessInfo"></span></p>
-                <p>到期时间: <span id="expireInfo"></span></p>
-            </div>
-            
-            <div class="section hidden" id="apiSection">
-                <div class="section-title">⚙️ API配置</div>
-                <div class="form-group">
-                    <label>GPTs API Key（选填）</label>
-                    <input type="password" id="apiKey" placeholder="暂时不需要">
+            <div class="help-page">
+                <h2>📚 使用前必读</h2>
+                
+                <div class="step-box">
+                    <h3>🔑 第一步：注册并购买API</h3>
+                    <p>本工具需要配合GPTs API使用，请先注册并充值：</p>
+                    <p><strong>官方网站：</strong><a href="https://gptsapi.net/api" target="_blank" class="api-link">https://gptsapi.net/api</a></p>
+                    <p><strong>注册流程：</strong></p>
+                    <ol>
+                        <li>点击上方链接注册账号</li>
+                        <li>充值（建议¥5起，可生成约50条）</li>
+                        <li>获取API Key</li>
+                    </ol>
+                    <p><strong>费用说明：</strong>约¥0.1/条文案，50条约¥5，不需要担心，国内可用</p>
                 </div>
-                <button class="btn btn-primary" onclick="saveApiKey()">保存配置</button>
-                <div class="status hidden" id="apiStatus"></div>
-            </div>
-            
-            <div class="section hidden" id="generateSection">
-                <div class="section-title">📝 批量生成</div>
-                <div class="form-group">
-                    <label>上传Excel文件（标题、选题、模板类型）</label>
-                    <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="handleFileSelect()">
-                    <div class="status hidden" id="fileInfo"></div>
+                
+                <div class="step-box">
+                    <h3>📋 第二步：两步流程生成文案</h3>
+                    <h4>💡 完整流程说明</h4>
+                    <p><strong>一步骤1：智能分配选题</strong></p>
+                    <p style="padding-left: 20px;">下载空白模板 → 填写标题 → 上传获取智能分配结果</p>
+                    
+                    <p><strong>一步骤2：批量生成文案</strong></p>
+                    <p style="padding-left: 20px;">上传分配结果 → 开始生成 → 下载最终文案</p>
                 </div>
-                <button class="btn btn-primary" id="generateBtn" onclick="startGeneration()" disabled>开始生成</button>
-                <div class="progress-container hidden" id="progressContainer">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill">0%</div>
-                    </div>
-                    <div class="log" id="log"></div>
+                
+                <h2>🎯 步骤1：智能分配选题</h2>
+                <div class="step-box">
+                    <h4>操作流程：</h4>
+                    <ol>
+                        <li>下载空白模板 → 填写标题列 → 上传智能分配 → 下载分配结果</li>
+                    </ol>
+                    
+                    <p><strong>📋 空白模板格式：</strong>只有"标题"列</p>
+                    <p><strong>📋 分配结果格式：</strong>序号、模板类型、标题、选题、生成数量</p>
+                    
+                    <h4>系统自动为每个标题分配：</h4>
+                    <ul>
+                        <li>✅ <strong>模板类型：</strong>模板1（技能类）/ 模板2（原因类）/ 模板3（教程类）</li>
+                        <li>✅ <strong>选题/主题：</strong>择言、人情世故、社交智慧、玩卡攻、防骗话、适用</li>
+                        <li>✅ <strong>生成数量：</strong>默认每个标题生成1条（可修改）</li>
+                    </ul>
+                    
+                    <h4>🔍 下一步操作：</h4>
+                    <p>① 打开下载的Excel文件<br>
+                    ② 如果想生成多条，修改"生成数量"列为2、3等<br>
+                    ③ 保存后，上传到方② 批量生成 区域</p>
+                    
+                    <p><strong>💡 提示：</strong>如果某配不准确，可以手动修改！</p>
                 </div>
+                
+                <h2>📝 步骤2：批量生成文案</h2>
+                <div class="step-box">
+                    <h4>操作流程：</h4>
+                    <ol>
+                        <li>上传步骤1生成的分配结果Excel</li>
+                        <li>点击"开始生成"</li>
+                        <li>等待进度条完成</li>
+                        <li>自动下载最终文案Excel</li>
+                    </ol>
+                    
+                    <p><strong>⚠️ 重要提示：</strong></p>
+                    <ul>
+                        <li>可以随时点击"暂停"，稍后点击"继续"</li>
+                        <li>生成过程中不要关闭浏览器</li>
+                        <li>如果中断，可以重新上传继续生成</li>
+                    </ul>
+                </div>
+                
+                <h2>💰 费用说明</h2>
+                <p>• 按实际生成条数计费，约¥0.1/条</p>
+                <p>• 50条约¥5，100条约¥10</p>
+                <p>• 建议先充值¥5测试效果</p>
+                
+                <h2>❓ 常见问题</h2>
+                <h3>Q: 为什么需要API？</h3>
+                <p>A: 本工具使用AI生成文案，需要调用GPTs API服务。</p>
+                
+                <h3>Q: 可以免费使用吗？</h3>
+                <p>A: 工具本身免费，但需要支付API调用费用（约¥0.1/条）。</p>
+                
+                <h3>Q: 生成失败怎么办？</h3>
+                <p>A: 检查API Key是否正确，余额是否充足，网络是否正常。</p>
             </div>
         </div>
     </div>
 
     <script>
         const CONFIG = {
+            API_BASE_URL: "https://api.gptsapi.net/v1/chat/completions",
+            MODEL: "gpt-4o-mini",
             SENSITIVE_WORDS: {
                 '技巧': '方法', '技能': '方式', '沦为': '变成', '帮助': '邦助',
                 '技术': '方法', '不足': '不够', '课程': '章节', '工作': '工做',
@@ -419,6 +724,18 @@
             }
         }
 
+        // 页面切换
+        function showHelp() {
+            document.getElementById('mainPage').classList.add('hidden');
+            document.getElementById('helpPage').classList.remove('hidden');
+        }
+
+        function showMain() {
+            document.getElementById('mainPage').classList.remove('hidden');
+            document.getElementById('helpPage').classList.add('hidden');
+        }
+
+        // 激活功能
         function activate() {
             const code = document.getElementById('activationCode').value.trim();
             const status = document.getElementById('activationStatus');
@@ -430,7 +747,7 @@
             
             if (code.startsWith('XHS-')) {
                 localStorage.setItem('activation', JSON.stringify({
-                    code, business: '社会化指南', expireDate: '2026-12-31'
+                    code, business: '全功能版', expireDate: '2026-12-31'
                 }));
                 
                 showStatus(status, '✅ 激活成功', 'success');
@@ -439,7 +756,7 @@
                     document.getElementById('activationSection').classList.add('hidden');
                     document.getElementById('activatedInfo').classList.remove('hidden');
                     document.getElementById('apiSection').classList.remove('hidden');
-                    document.getElementById('businessInfo').textContent = '社会化指南';
+                    document.getElementById('businessInfo').textContent = '全功能版';
                     document.getElementById('expireInfo').textContent = '2026-12-31';
                 }, 1000);
             } else {
@@ -447,18 +764,142 @@
             }
         }
 
+        function resetActivation() {
+            localStorage.removeItem('activation');
+            localStorage.removeItem('apiKey');
+            location.reload();
+        }
+
         function saveApiKey() {
             const apiKey = document.getElementById('apiKey').value.trim();
             const status = document.getElementById('apiStatus');
             
-            showStatus(status, '✅ 配置已保存（当前纯模板生成，无需API）', 'success');
+            if (!apiKey) {
+                showStatus(status, '请输入API Key', 'error');
+                return;
+            }
+            
+            localStorage.setItem('apiKey', apiKey);
+            showStatus(status, '✅ API Key已保存', 'success');
             
             setTimeout(() => {
+                document.getElementById('assignSection').classList.remove('hidden');
                 document.getElementById('generateSection').classList.remove('hidden');
             }, 500);
         }
 
+        // 下载模板
+        function downloadBlankTemplate() {
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet([['标题']]);
+            XLSX.utils.book_append_sheet(wb, ws, "空白模板");
+            XLSX.writeFile(wb, '步骤1_空白模板.xlsx');
+            addAssignLog('✅ 空白模板已下载');
+        }
+
+        function downloadStandardTemplate() {
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet([
+                ['序号', '模板类型', '标题', '选题', '生成数量'],
+                [1, '模板1', '示例标题', '社交', 1]
+            ]);
+            XLSX.utils.book_append_sheet(wb, ws, "标准模板");
+            XLSX.writeFile(wb, '步骤2_标准模板.xlsx');
+            addLog('✅ 标准模板已下载');
+        }
+
+        // 智能分配选题
+        let assignData = null;
+
+        function handleAssignFile() {
+            const file = document.getElementById('assignFile').files[0];
+            const status = document.getElementById('assignFileInfo');
+            
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    assignData = XLSX.utils.sheet_to_json(sheet);
+                    
+                    if (!assignData[0] || !assignData[0]['标题']) {
+                        showStatus(status, '❌ Excel必须包含"标题"列', 'error');
+                        return;
+                    }
+                    
+                    showStatus(status, `✅ ${file.name} | ${assignData.length} 条`, 'success');
+                    
+                    document.getElementById('assignProgress').classList.remove('hidden');
+                    await startAssignment();
+                    
+                } catch (error) {
+                    showStatus(status, '❌ 读取失败：' + error.message, 'error');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        async function startAssignment() {
+            const log = document.getElementById('assignLog');
+            log.innerHTML = '';
+            
+            addAssignLog(`📊 开始智能分配 ${assignData.length} 条`);
+            
+            const results = [];
+            const templates = ['模板1', '模板3'];
+            const topics = ['择言', '人情世故', '社交智慧', '玩卡攻', '防骗话', '适用'];
+            
+            for (let i = 0; i < assignData.length; i++) {
+                const title = assignData[i]['标题'] || '';
+                const template = randomPick(templates);
+                const topic = randomPick(topics);
+                
+                results.push({
+                    '序号': i + 1,
+                    '模板类型': template,
+                    '标题': title,
+                    '选题': topic,
+                    '生成数量': 1
+                });
+                
+                updateAssignProgress(Math.round((i + 1) / assignData.length * 100));
+                addAssignLog(`✓ [${i+1}/${assignData.length}] ${title.substring(0, 30)}...`);
+            }
+            
+            // 下载结果
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(results);
+            XLSX.utils.book_append_sheet(wb, ws, "分配结果");
+            
+            const timestamp = new Date().toISOString().replace(/[:-]/g, '').split('.')[0];
+            XLSX.writeFile(wb, `选题分配结果_${timestamp}.xlsx`);
+            
+            addAssignLog('\n✅ 智能分配完成！文件已自动下载。');
+            addAssignLog('📌 下一步操作：\n1. 打开下载的Excel文件\n2. 如需修改"生成数量"为2、3等\n3. 保存后上传到【步骤2：批量生成】区域');
+        }
+
+        function updateAssignProgress(percent) {
+            const fill = document.getElementById('assignProgressFill');
+            fill.style.width = percent + '%';
+            fill.textContent = Math.round(percent) + '%';
+        }
+
+        function addAssignLog(message) {
+            const log = document.getElementById('assignLog');
+            const item = document.createElement('div');
+            item.className = 'log-item';
+            item.textContent = message;
+            log.appendChild(item);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // 批量生成
         let excelData = null;
+        let isPaused = false;
+        let currentIndex = 0;
         
         function handleFileSelect() {
             const file = document.getElementById('excelFile').files[0];
@@ -475,8 +916,7 @@
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
-                    const sheetName = workbook.SheetNames[0];
-                    const sheet = workbook.Sheets[sheetName];
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
                     excelData = XLSX.utils.sheet_to_json(sheet);
                     
                     if (!excelData[0] || !excelData[0]['标题']) {
@@ -495,13 +935,14 @@
             reader.readAsArrayBuffer(file);
         }
 
-        let isGenerating = false;
-        
         async function startGeneration() {
-            if (isGenerating || !excelData) return;
+            if (!excelData) return;
             
-            isGenerating = true;
-            document.getElementById('generateBtn').disabled = true;
+            currentIndex = 0;
+            isPaused = false;
+            
+            document.getElementById('generateBtn').classList.add('hidden');
+            document.getElementById('pauseBtn').classList.remove('hidden');
             document.getElementById('progressContainer').classList.remove('hidden');
             
             const log = document.getElementById('log');
@@ -520,44 +961,53 @@
             addLog(`📊 共${validData.length}条`);
             
             const results = [];
+            const apiKey = localStorage.getItem('apiKey');
             
-            for (let i = 0; i < validData.length; i++) {
+            for (let i = currentIndex; i < validData.length; i++) {
+                if (isPaused) {
+                    currentIndex = i;
+                    addLog('⏸️ 已暂停');
+                    return;
+                }
+                
                 const row = validData[i];
                 const title = row['标题'] || '';
                 const topic = row['选题'] || '通用';
+                const templateType = row['模板类型'] || '模板1';
+                const count = parseInt(row['生成数量']) || 1;
                 
                 addLog(`[${i+1}/${validData.length}] ${title.substring(0, 40)}...`);
                 
-                try {
-                    const templateType = row['模板类型'] || '模板1';
-                    const content = generateContent(title, topic, templateType);
-                    const tagMatch = content.match(/(#[^\s#\n]+\s*){8}/);
-                    const tags = tagMatch ? tagMatch[0].trim() : '';
-                    const contentOnly = content.replace(/(#[^\s#\n]+\s*)+$/, '').trim();
-                    
-                    results.push({
-                        '序号': i + 1,
-                        '模板': templateType,
-                        '标题': title,
-                        '选题': topic,
-                        '文案': contentOnly,
-                        '话题': tags,
-                        '字数': contentOnly.length
-                    });
-                    
-                    addLog(`✓ ${contentOnly.length}字`);
-                } catch (error) {
-                    const templateType = row['模板类型'] || '模板1';
-                    results.push({
-                        '序号': i + 1,
-                        '模板': templateType,
-                        '标题': title,
-                        '选题': topic,
-                        '文案': `失败: ${error.message}`,
-                        '话题': '',
-                        '字数': 0
-                    });
-                    addLog(`✗ ${error.message}`);
+                for (let j = 0; j < count; j++) {
+                    try {
+                        const content = generateContent(title, topic, templateType);
+                        const tagMatch = content.match(/(#[^\s#\n]+\s*){8}/);
+                        const tags = tagMatch ? tagMatch[0].trim() : '';
+                        const contentOnly = content.replace(/(#[^\s#\n]+\s*)+$/, '').trim();
+                        
+                        results.push({
+                            '序号': results.length + 1,
+                            '模板': templateType,
+                            '标题': title,
+                            '选题': topic,
+                            '文案': contentOnly,
+                            '话题': tags,
+                            '字数': contentOnly.length
+                        });
+                        
+                        addLog(`  ✓ 第${j+1}条 (${contentOnly.length}字)`);
+                    } catch (error) {
+                        results.push({
+                            '序号': results.length + 1,
+                            '模板': templateType,
+                            '标题': title,
+                            '选题': topic,
+                            '文案': `失败: ${error.message}`,
+                            '话题': '',
+                            '字数': 0
+                        });
+                        addLog(`  ✗ 第${j+1}条失败`);
+                    }
                 }
                 
                 updateProgress(Math.round((i + 1) / validData.length * 100));
@@ -565,9 +1015,25 @@
             
             downloadExcel(results);
             
-            isGenerating = false;
+            document.getElementById('pauseBtn').classList.add('hidden');
+            document.getElementById('resumeBtn').classList.add('hidden');
+            document.getElementById('generateBtn').classList.remove('hidden');
             document.getElementById('generateBtn').disabled = false;
+            
             addLog('\n✅ 完成！');
+        }
+
+        function pauseGeneration() {
+            isPaused = true;
+            document.getElementById('pauseBtn').classList.add('hidden');
+            document.getElementById('resumeBtn').classList.remove('hidden');
+        }
+
+        function resumeGeneration() {
+            isPaused = false;
+            document.getElementById('resumeBtn').classList.add('hidden');
+            document.getElementById('pauseBtn').classList.remove('hidden');
+            startGeneration();
         }
 
         function downloadExcel(data) {
@@ -595,11 +1061,16 @@
             const log = document.getElementById('log');
             const item = document.createElement('div');
             item.className = 'log-item';
+            
+            if (message.includes('✓')) item.classList.add('success');
+            if (message.includes('✗')) item.classList.add('error');
+            
             item.textContent = message;
             log.appendChild(item);
             log.scrollTop = log.scrollHeight;
         }
 
+        // 初始化
         window.onload = function() {
             const activation = localStorage.getItem('activation');
             
@@ -610,7 +1081,13 @@
                 document.getElementById('apiSection').classList.remove('hidden');
                 document.getElementById('businessInfo').textContent = info.business;
                 document.getElementById('expireInfo').textContent = info.expireDate;
-                document.getElementById('generateSection').classList.remove('hidden');
+                
+                const apiKey = localStorage.getItem('apiKey');
+                if (apiKey) {
+                    document.getElementById('apiKey').value = apiKey;
+                    document.getElementById('assignSection').classList.remove('hidden');
+                    document.getElementById('generateSection').classList.remove('hidden');
+                }
             }
         };
     </script>
