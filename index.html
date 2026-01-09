@@ -3,1090 +3,566 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小红书文案生成器 - 完整版</title>
+    <title>小红书文案生成器 - v6.5 修复版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-            position: relative;
-        }
-        .header h1 { font-size: 32px; margin-bottom: 8px; }
-        .header p { font-size: 14px; opacity: 0.9; }
-        .header .back-btn {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,0.2);
-            border: 2px solid white;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .header .help-btn {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,0.2);
-            border: 2px solid white;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; position: relative; }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p { opacity: 0.9; font-size: 14px; }
+        .admin-btn { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); color: white; border: 2px solid rgba(255,255,255,0.5); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 12px; transition: all 0.3s; }
+        .admin-btn:hover { background: rgba(255,255,255,0.3); }
         .content { padding: 30px; }
-        .section {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-left: 4px solid #667eea;
-        }
-        .section-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .section { background: #f8f9fa; border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 4px solid #667eea; }
+        .section-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #333; display: flex; align-items: center; justify-content: space-between; }
+        .info-box { background: white; border-left: 4px solid #ff9800; padding: 15px; margin-bottom: 15px; border-radius: 4px; font-size: 13px; color: #666; }
         .form-group { margin-bottom: 15px; }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 500;
-            font-size: 14px;
-        }
-        input[type="text"],
-        input[type="password"],
-        input[type="file"],
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border 0.3s;
-        }
-        input:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-right: 10px;
-            margin-bottom: 10px;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
-        }
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-        .btn-warning {
-            background: #ffc107;
-            color: #333;
-        }
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-        .status {
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            font-size: 14px;
-        }
-        .status.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .status.info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        .status.warning {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
+        label { display: block; margin-bottom: 8px; color: #555; font-weight: 500; font-size: 14px; }
+        input[type="text"], input[type="password"], input[type="date"], input[type="file"], select { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; transition: border-color 0.3s; }
+        input:focus { outline: none; border-color: #667eea; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s; margin-right: 10px; margin-bottom: 10px; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ff9800; color: white; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .status { padding: 15px; border-radius: 8px; margin-top: 15px; font-size: 14px; }
+        .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .hidden { display: none !important; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; border-radius: 12px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #999; }
+        .code-display { background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0; }
         .progress-container { margin-top: 20px; }
-        .progress-bar {
-            width: 100%;
-            height: 35px;
-            background: #e0e0e0;
-            border-radius: 18px;
-            overflow: hidden;
-            position: relative;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            transition: width 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        .log {
-            margin-top: 15px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            max-height: 400px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.8;
-        }
-        .log-item {
-            margin-bottom: 5px;
-            padding: 8px;
-            border-left: 3px solid #667eea;
-            padding-left: 12px;
-            background: white;
-            border-radius: 4px;
-        }
-        .log-item.success { border-left-color: #28a745; }
-        .log-item.error { border-left-color: #dc3545; }
-        .feature-box {
-            background: #fff9e6;
-            border: 2px dashed #ffc107;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        .feature-box h4 {
-            color: #856404;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-        .feature-box ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .feature-box li {
-            padding: 5px 0;
-            color: #856404;
-            font-size: 14px;
-        }
-        .feature-box li:before {
-            content: "✓ ";
-            color: #28a745;
-            font-weight: bold;
-            margin-right: 5px;
-        }
-        .help-page {
-            padding: 40px;
-            background: white;
-        }
-        .help-page h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        .help-page h3 {
-            color: #333;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-        .help-page p, .help-page li {
-            color: #666;
-            line-height: 1.8;
-            margin-bottom: 10px;
-        }
-        .help-page code {
-            background: #f8f9fa;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            color: #e83e8c;
-        }
-        .step-box {
-            background: #e7f3ff;
-            border-left: 4px solid #2196F3;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 4px;
-        }
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .api-link {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .api-link:hover {
-            text-decoration: underline;
-        }
+        .progress-bar { width: 100%; height: 30px; background: #e0e0e0; border-radius: 15px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); transition: width 0.3s; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold; }
+        .log { margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; max-height: 300px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.8; }
+        .log-item { margin-bottom: 5px; padding: 5px; border-left: 3px solid #667eea; padding-left: 10px; }
+        .history-bar { display: flex; align-items: center; justify-content: space-between; background: #fff3e0; padding: 10px 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffe0b2; }
+        .history-info { font-size: 13px; color: #e65100; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 主页面 -->
-        <div id="mainPage">
-            <div class="header">
-                <button class="help-btn" onclick="showHelp()">📖 使用说明</button>
-                <h1>🎨 小红书文案生成器</h1>
-                <p>网页版 v2.0 - 专业、高效、易用</p>
+        <div class="header">
+            <button class="admin-btn" onclick="window.location.reload()" style="left: 20px; right: auto;">🔄 刷新</button>
+            <h1>🎨 小红书文案生成器</h1>
+            <p>v6.5 修复版 - 3种模板 | 空行修复 | 自动备份</p>
+            <button class="admin-btn" onclick="showAdminModal()">⚙️ 管理</button>
+        </div>
+        
+        <div class="content">
+            <div class="section" id="activationSection">
+                <div class="section-title">🔑 软件激活</div>
+                <div class="form-group">
+                    <label>请输入激活码</label>
+                    <input type="text" id="activationCode" placeholder="XHS-ALL-xxxx-xxxx">
+                </div>
+                <button class="btn btn-primary" onclick="activate()">激活软件</button>
+                <div class="status hidden" id="activationStatus"></div>
             </div>
             
-            <div class="content">
-                <!-- 激活区域 -->
-                <div class="section" id="activationSection">
-                    <div class="section-title">🔑 软件激活</div>
-                    <div class="form-group">
-                        <label>激活码</label>
-                        <input type="text" id="activationCode" placeholder="XHS-ALL-20261231-7BF5">
+            <div class="section hidden" id="activatedInfo">
+                <div class="section-title">✅ 已激活</div>
+                <p>业务线: <span id="businessInfo"></span></p>
+                <p>到期时间: <span id="expireInfo"></span></p>
+                <button class="btn btn-secondary" onclick="resetActivation()">退出登录</button>
+            </div>
+
+            <div class="section hidden" id="apiConfigSection">
+                <div class="section-title">🔌 API 配置 (Claude 3.5)</div>
+                <div class="info-box">
+                    <p>⚠️ 需用户自备 Key。本版本专门针对"社会化指南"优化。</p>
+                </div>
+                <div class="form-group">
+                    <label>API Key (以 sk- 开头)</label>
+                    <input type="password" id="userApiKey" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx">
+                </div>
+                <button class="btn btn-primary" onclick="saveUserApiKey()">💾 保存 Key</button>
+                <div class="status hidden" id="apiStatus"></div>
+            </div>
+            
+            <div class="section hidden" id="assignSection">
+                <div class="section-title">🔍 步骤1：智能分配选题</div>
+                <div class="info-box">
+                    <strong>✅ 修复说明：</strong><br>
+                    • 现在会智能分配3种模板类型（观察式、故事式、方法式）<br>
+                    • 确保文案有差异化，不再千篇一律
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="downloadBlankTemplate()">📥 下载空白模板</button>
+                    <button class="btn btn-success" onclick="document.getElementById('assignFile').click()">📤 上传并分配</button>
+                </div>
+                <input type="file" id="assignFile" accept=".xlsx,.xls" style="display:none" onchange="handleAssignFile()">
+                <div class="status hidden" id="assignFileInfo"></div>
+            </div>
+            
+            <div class="section hidden" id="generateSection">
+                <div class="section-title">
+                    <span>📝 步骤2：AI 批量生成</span>
+                </div>
+
+                <div class="history-bar" id="historyBar">
+                    <div class="history-info">
+                        💡 上次记录：<span id="lastSavedTime">无</span>
                     </div>
-                    <button class="btn btn-primary" onclick="activate()">激活软件</button>
-                    <div class="status hidden" id="activationStatus"></div>
+                    <button class="btn btn-warning" onclick="recoverLastSession()" style="margin:0; font-size:12px; padding: 8px 15px;">
+                        📂 恢复/下载上次记录
+                    </button>
                 </div>
                 
-                <!-- 已激活信息 -->
-                <div class="section hidden" id="activatedInfo">
-                    <div class="section-title">✅ 已激活</div>
-                    <p>业务线: <strong><span id="businessInfo"></span></strong></p>
-                    <p>到期时间: <strong><span id="expireInfo"></span></strong></p>
-                    <button class="btn btn-secondary" onclick="resetActivation()">重新激活</button>
+                <div class="form-group" style="background: #e7f3ff; padding: 15px; border-radius: 8px; border: 1px solid #b3d9ff;">
+                    <label style="color: #0066cc;">🎯 篇幅选择</label>
+                    <select id="contentLength">
+                        <option value="standard">🔵 标准版 (500-600字 | 完读率高)</option>
+                        <option value="long">🟣 深度版 (850-950字 | 收藏率高)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>上传【步骤1】生成的分配结果</label>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="handleFileSelect()">
+                    <div class="status hidden" id="fileInfo"></div>
                 </div>
                 
-                <!-- API配置 -->
-                <div class="section hidden" id="apiSection">
-                    <div class="section-title">⚙️ API配置</div>
-                    <div class="status info">
-                        <strong>🔔 第一步：注册并购买API</strong><br>
-                        本工具需要配合GPTs API使用，请先注册并充值：<br>
-                        官方网站：<a href="https://gptsapi.net/api" target="_blank" class="api-link">https://gptsapi.net/api</a><br>
-                        <strong>注册流程：</strong>1. 点击上方链接注册账号 → 2. 充值（建议¥5起，可生成约50条） → 3. 获取API Key<br>
-                        <strong>费用说明：</strong>约¥0.1/条文案，50条约¥5，不需要担心，国内可用
-                    </div>
-                    <div class="form-group">
-                        <label>GPTs API Key</label>
-                        <input type="password" id="apiKey" placeholder="sk-xxxxxxxxxxxxxxxx">
-                    </div>
-                    <button class="btn btn-primary" onclick="saveApiKey()">保存配置</button>
-                    <div class="status hidden" id="apiStatus"></div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="generateBtn" onclick="startGeneration()" disabled>🚀 开始生成</button>
+                    <button class="btn" style="background: #ff9800; color: white; display: none;" onclick="pauseGeneration()" id="pauseBtn">⏸️ 暂停</button>
+                    <button class="btn btn-success hidden" id="manualDownloadBtn" onclick="manualDownloadCurrent()">📥 手动导出</button>
                 </div>
                 
-                <!-- 步骤1：智能分配选题 -->
-                <div class="section hidden" id="assignSection">
-                    <div class="section-title">🔍 步骤1：智能分配选题</div>
-                    
-                    <div class="feature-box">
-                        <h4>💡 完整流程说明</h4>
-                        <ul>
-                            <li><strong>步骤1：</strong> 智能分配选题</li>
-                            <li style="padding-left: 20px;">下载空白模板 → 填写标题 → 上传获取智能分配结果</li>
-                            <li><strong>步骤2：</strong> 批量生成文案</li>
-                            <li style="padding-left: 20px;">上传分配结果 → 开始生成 → 下载最终文案</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="step-box">
-                        <strong>📋 操作流程：</strong><br>
-                        ① 下载空白模板 → ② 填写标题列 → ③ 上传智能分配 → ④ 下载分配结果
-                    </div>
-                    
-                    <div class="status info">
-                        <strong>空白模板格式：</strong>只有"标题"列<br>
-                        <strong>分配结果格式：</strong>序号、模板类型、标题、选题、生成数量
-                    </div>
-                    
-                    <div class="button-group">
-                        <button class="btn btn-primary" onclick="downloadBlankTemplate()">📥 1. 下载空白模板</button>
-                        <button class="btn btn-warning" onclick="document.getElementById('assignFile').click()">📤 2. 智能分配选题</button>
-                    </div>
-                    <input type="file" id="assignFile" accept=".xlsx,.xls" style="display:none" onchange="handleAssignFile()">
-                    
-                    <div class="status hidden" id="assignFileInfo"></div>
-                    <div class="hidden" id="assignProgress">
-                        <div class="progress-container">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="assignProgressFill">0%</div>
-                            </div>
-                            <div class="log" id="assignLog"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 步骤2：批量生成 -->
-                <div class="section hidden" id="generateSection">
-                    <div class="section-title">📝 步骤2：批量生成文案</div>
-                    
-                    <div class="status warning">
-                        <strong>⚠️ 温馨提示：</strong>请使用<button class="btn btn-primary" style="padding:4px 8px;font-size:12px;margin:0 5px;" onclick="downloadStandardTemplate()">📥 下载标准模板</button>填写后上传，避免格式错误
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>上传标题Excel文件</label>
-                        <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="handleFileSelect()">
-                        <div class="status hidden" id="fileInfo"></div>
-                    </div>
-                    
-                    <div class="button-group">
-                        <button class="btn btn-primary" id="generateBtn" onclick="startGeneration()" disabled>开始生成</button>
-                        <button class="btn btn-warning hidden" id="pauseBtn" onclick="pauseGeneration()">⏸️ 暂停</button>
-                        <button class="btn btn-secondary hidden" id="resumeBtn" onclick="resumeGeneration()">▶️ 继续</button>
-                    </div>
-                    
-                    <div class="progress-container hidden" id="progressContainer">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill">0%</div>
-                        </div>
-                        <div class="log" id="log"></div>
-                    </div>
+                <div class="progress-container hidden" id="progressContainer">
+                    <div class="progress-bar"><div class="progress-fill" id="progressFill">0%</div></div>
+                    <div class="log" id="log"></div>
                 </div>
             </div>
         </div>
-        
-        <!-- 帮助页面 -->
-        <div id="helpPage" class="hidden">
-            <div class="header">
-                <button class="back-btn" onclick="showMain()">← 返回主页</button>
-                <h1>📖 使用说明</h1>
-                <p>详细操作指南</p>
+    </div>
+
+    <div class="modal" id="adminModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔧 管理员面板</h3>
+                <button class="close-btn" onclick="closeAdminModal()">×</button>
             </div>
-            <div class="help-page">
-                <h2>📚 使用前必读</h2>
-                
-                <div class="step-box">
-                    <h3>🔑 第一步：注册并购买API</h3>
-                    <p>本工具需要配合GPTs API使用，请先注册并充值：</p>
-                    <p><strong>官方网站：</strong><a href="https://gptsapi.net/api" target="_blank" class="api-link">https://gptsapi.net/api</a></p>
-                    <p><strong>注册流程：</strong></p>
-                    <ol>
-                        <li>点击上方链接注册账号</li>
-                        <li>充值（建议¥5起，可生成约50条）</li>
-                        <li>获取API Key</li>
-                    </ol>
-                    <p><strong>费用说明：</strong>约¥0.1/条文案，50条约¥5，不需要担心，国内可用</p>
+            <div id="adminLogin">
+                <div class="form-group">
+                    <input type="password" id="adminPassword" placeholder="输入管理员密码">
                 </div>
-                
-                <div class="step-box">
-                    <h3>📋 第二步：两步流程生成文案</h3>
-                    <h4>💡 完整流程说明</h4>
-                    <p><strong>一步骤1：智能分配选题</strong></p>
-                    <p style="padding-left: 20px;">下载空白模板 → 填写标题 → 上传获取智能分配结果</p>
-                    
-                    <p><strong>一步骤2：批量生成文案</strong></p>
-                    <p style="padding-left: 20px;">上传分配结果 → 开始生成 → 下载最终文案</p>
+                <button class="btn btn-primary" onclick="adminLogin()">登录</button>
+            </div>
+            <div id="adminPanel" class="hidden">
+                <div class="form-group">
+                    <label>业务线</label>
+                    <select id="businessType"><option value="all">全功能版</option></select>
                 </div>
-                
-                <h2>🎯 步骤1：智能分配选题</h2>
-                <div class="step-box">
-                    <h4>操作流程：</h4>
-                    <ol>
-                        <li>下载空白模板 → 填写标题列 → 上传智能分配 → 下载分配结果</li>
-                    </ol>
-                    
-                    <p><strong>📋 空白模板格式：</strong>只有"标题"列</p>
-                    <p><strong>📋 分配结果格式：</strong>序号、模板类型、标题、选题、生成数量</p>
-                    
-                    <h4>系统自动为每个标题分配：</h4>
-                    <ul>
-                        <li>✅ <strong>模板类型：</strong>模板1（技能类）/ 模板2（原因类）/ 模板3（教程类）</li>
-                        <li>✅ <strong>选题/主题：</strong>择言、人情世故、社交智慧、玩卡攻、防骗话、适用</li>
-                        <li>✅ <strong>生成数量：</strong>默认每个标题生成1条（可修改）</li>
-                    </ul>
-                    
-                    <h4>🔍 下一步操作：</h4>
-                    <p>① 打开下载的Excel文件<br>
-                    ② 如果想生成多条，修改"生成数量"列为2、3等<br>
-                    ③ 保存后，上传到方② 批量生成 区域</p>
-                    
-                    <p><strong>💡 提示：</strong>如果某配不准确，可以手动修改！</p>
+                <div class="form-group">
+                    <label>到期日期</label>
+                    <input type="date" id="expireDate">
                 </div>
-                
-                <h2>📝 步骤2：批量生成文案</h2>
-                <div class="step-box">
-                    <h4>操作流程：</h4>
-                    <ol>
-                        <li>上传步骤1生成的分配结果Excel</li>
-                        <li>点击"开始生成"</li>
-                        <li>等待进度条完成</li>
-                        <li>自动下载最终文案Excel</li>
-                    </ol>
-                    
-                    <p><strong>⚠️ 重要提示：</strong></p>
-                    <ul>
-                        <li>可以随时点击"暂停"，稍后点击"继续"</li>
-                        <li>生成过程中不要关闭浏览器</li>
-                        <li>如果中断，可以重新上传继续生成</li>
-                    </ul>
+                <button class="btn btn-success" onclick="generateCode()">生成激活码</button>
+                <div class="code-display hidden" id="codeDisplay">
+                    <div class="code-text" id="generatedCode"></div>
                 </div>
-                
-                <h2>💰 费用说明</h2>
-                <p>• 按实际生成条数计费，约¥0.1/条</p>
-                <p>• 50条约¥5，100条约¥10</p>
-                <p>• 建议先充值¥5测试效果</p>
-                
-                <h2>❓ 常见问题</h2>
-                <h3>Q: 为什么需要API？</h3>
-                <p>A: 本工具使用AI生成文案，需要调用GPTs API服务。</p>
-                
-                <h3>Q: 可以免费使用吗？</h3>
-                <p>A: 工具本身免费，但需要支付API调用费用（约¥0.1/条）。</p>
-                
-                <h3>Q: 生成失败怎么办？</h3>
-                <p>A: 检查API Key是否正确，余额是否充足，网络是否正常。</p>
             </div>
         </div>
     </div>
 
     <script>
         const CONFIG = {
+            SECRET_KEY: "xiaohongshu_2025_secret_key_change_me",
+            ADMIN_PASSWORD: "admin", 
             API_BASE_URL: "https://api.gptsapi.net/v1/chat/completions",
-            MODEL: "gpt-4o-mini",
-            SENSITIVE_WORDS: {
-                '技巧': '方法', '技能': '方式', '沦为': '变成', '帮助': '邦助',
-                '技术': '方法', '不足': '不够', '课程': '章节', '工作': '工做',
-                '节课': '内容', '职场': '值场', '提升': '变好', '公司': '公同',
-                '单位': '單位', '同事': '同士'
-            }
-        };
-
-        const VARIANTS = {
-            personalIntro: [
-                "因为曾经我也是一个内向、敏感的人，不善沟通，不会处事",
-                "说实话，我以前也是个不善言辞的人，社交上碰了不少钉子",
-                "坦白讲，过去的我也不懂如何社交，不会来事，吃过很多亏",
-                "回想起来，我也经历过那种不知道怎么和人打交道的阶段",
-                "其实我也是从一个社交小白慢慢摸索过来的，走过不少弯路",
-                "以前的我也是那种在社交场合不知所措的人，说话都紧张",
-                "很长一段时间，我也是那种不会接话、聊天总冷场的人",
-                "曾经的我也是个社交困难户，见人就紧张，不知道说什么好",
-                "我也经历过不懂人情世故、到处碰壁的阶段",
-                "以前我也是个在人际交往中特别笨拙的人",
-                "说来惭愧，我也曾是那种社交能力很差的人",
-                "过去的我在社交方面也是一塌糊涂，经常闹笑话",
-                "我也有过那段不会说话、不懂规矩的时期",
-                "曾几何时，我也是个在人群中找不到存在感的人",
-                "回头看，我那时候真的是个社交废柴"
-            ],
+            MODEL: "claude-3-5-sonnet-20240620", 
             
-            changeProcess: [
-                "所以，我花了四年时间，慢慢改变自己，现在我将我的经验总结成了一份20万字、67节内容的社会化攻略指南",
-                "为此，我用了四年时间摸索总结，把自己的经验整理成了一份20万字、包含67堂内容的社会化变好指南",
-                "经过四年的实践和总结，我把这些心得体会整理成了一份完整的社会化指南，总共20万字，包含67个专题内容",
-                "这四年里，我一点点积累经验，最终把它们梳理成了一套系统的社会化手册，20万字干货，67节实战内容",
-                "我花了整整四年时间，从零开始学习摸索，现在把这些宝贵经验写成了20万字的社会化指南，分成67内容详细讲解",
-                "四年的时间，我从不会社交到慢慢找到方式，把所有经验都记录下来，整理成20万字、67堂内容的实用指南",
-                "用了四年时间改变自己，现在我把这段经历和方式都写进了这份20万字的社会化指南里，一共67节内容",
-                "这四年的摸索让我总结出了一套完整的方式，现在把它们整理成了20万字、67内容的系统化指南",
-                "四年时间，我把自己从社交小白练成了老手，现在把这些经验写成了20万字、67节内容的指南",
-                "经过四年的学习和实践，我整理出了这份20万字、67个专题内容的社会化手册",
-                "我用四年时间总结经验，最终形成了这份20万字、包含67节内容的完整指南",
-                "四年的积累，让我把这些心得整理成了一份系统的指南，20万字内容，67个章节",
-                "花了四年摸索，我把所有经验提炼成了这份20万字、67节内容的实战手册",
-                "四年时间，从零到一，我把这个过程整理成了20万字、67内容的社会化指南",
-                "经过四年的沉淀，我将这些经验汇总成了20万字、67专题内容的完整手册"
-            ],
+            SENSITIVE_WORDS: {
+                '微信': '平时聊天', '加微信': '加好友', '钱': '米', '赚钱': '搞米',
+                '私信': '后台', '技巧': '方法', '帮助': '协助', '沦为': '变成',
+                '职场': '值场', '公司': '公同', '单位': '單位', '同事': '同士'
+            },
+            
+            KEYWORDS: {
+                'work': ['职场', '职场生存法则', '职场干货', '职场思维', '职场人际关系'],
+                'social': ['社会化', '人情世故', '高情商', '为人处事', '社交技巧'],
+                'growth': ['个人成长', '成长', '自我提升', '思维提升', '认知觉醒']
+            },
 
-            hopeMessage: [
-                "希望你也能和我一样，从内向敏感变成落落大方，少走几年弯路，懂得为人处事的方式",
-                "如果你也有同样的困扰，这份指南或许能邦助到你，让你从不善表达变成侃侃而谈，少走一些弯路，掌握为人处世的智慧",
-                "把这些经验分享出来，希望能让更多人少走弯路，从不会来事变成游刃有余，真正懂得为人处世的分寸",
-                "分享这份指南，是希望你能避开我踩过的坑，从社交小白快速成长，学会那些学校里不教的人情世故",
-                "如果这份指南能邦助你少走一些弯路，让你在社交中更自信从容，那就是我最大的心愿",
-                "希望通过这份指南，让你不用像我一样花四年时间摸索，而是能快速掌握这些社会化的方式",
-                "把这些年的经验分享给你，就是希望你能少吃点亏，少走点弯路，更快找到自己的社交节奏",
-                "如果你也想改变，这份指南可以变成你的参考，让你不用像我当年那样迷茫和焦虑",
-                "希望我的经验能邦助到你，让你在社会化的路上走得更顺一些",
-                "分享出来就是希望能让更多朋友少经历一些社交上的痛苦",
-                "如果能让你少走一年弯路，这份指南就值了",
-                "希望你能从这份指南里找到适合自己的社交方式"
-            ],
+            // ✅ 修复1：添加3种模板类型
+            TEMPLATE_TYPES: ['观察式', '故事式', '方法式'],
 
-            highlights: [
-                "这份手册的亮点：\n1️⃣ 全文20万字，67节内容，不掺水纯干货，只讲最有用的方式，不讲空话。内容范围，从心态到方式，再到内核修炼，手把手带你变好社会化\n2️⃣ 涵盖各种场合，值场、聚会、饭局等等，带你轻松应对所有社交难题\n3️⃣ 总结万能对话公式和各场景对话案例，邦助快速理解和学习\n4️⃣ 赠送社会化思维导图、电子书等学习资料",
-
-                "指南的核心内容：\n1️⃣ 内容实战性强，20万字精华，67堂系统内容，每个方式都有具体场景和话术，拿来就能用\n2️⃣ 场景覆盖全面，从值场到聚餐，从闲聊到应酬，各种社交场合都有对应的应对策略\n3️⃣ 提供大量真实案例和对话模板，不是空洞的理论，而是真正落地的方式\n4️⃣ 额外赠送配套学习资料，包括思维导图、电子书等",
-
-                "这套指南的特色：\n1️⃣ 系统完整，20万字干货内容分成67个专题，从基础到进阶，层层递进邦助你变好\n2️⃣ 实用性强，涵盖值场社交、朋友聚会、饭局应酬等各类场景，随查随用\n3️⃣ 方式具体，每个方式都配有详细的话术模板和实战案例，学完就能用\n4️⃣ 资源丰富，附赠社会化相关的电子书、思维导图等学习资料",
-
-                "指南包含哪些内容：\n1️⃣ 67堂精品内容，20万字实战干货，没有废话套话，全是可直接应用的具体方式\n2️⃣ 多场景覆盖，无论是值场环境、朋友聚会还是正式饭局，都能找到对应的应对方式\n3️⃣ 案例丰富，大量真实对话案例和万能公式，让你快速掌握社交话术\n4️⃣ 赠品超值，免费附送相关电子书、思维导图等补充资料",
-
-                "手册亮点介绍：\n1️⃣ 内容扎实，20万字+67内容时，纯干货输出，从认知到行动全方位变好你的社会化能力\n2️⃣ 场景全面，涵盖值场、社交、聚餐、应酬等各类场景，实用性极强\n3️⃣ 学习高效，配有大量对话模板和实战案例，方便快速理解和模仿\n4️⃣ 资源配套，赠送电子版学习资料，包括电子书、思维导图等",
-
-                "这份指南有什么：\n1️⃣ 20万字系统内容，67个实战专题，从理论到实践，手把手教你变好社会化水平\n2️⃣ 覆盖各类社交场景，值场、聚会、饭局、应酬，每个场景都有具体应对方式\n3️⃣ 大量话术模板和真实案例，让你看完就能用，学了就能说\n4️⃣ 额外赠送电子书和思维导图，邦助你更系统地学习",
-
-                "指南的主要内容：\n1️⃣ 67节系统内容，20万字纯干货，每一内容都是实战总结，没有一句废话\n2️⃣ 场景全覆盖，从日常闲聊到正式场合，从值场到社交，应有尽有\n3️⃣ 方式论+案例+话术三合一，理论和实践结合，学完立刻能用\n4️⃣ 赠送配套资料，包括电子书、思维导图等辅助工具",
-
-                "手册的核心价值：\n1️⃣ 内容系统，20万字分67个主题详细讲解，从基础认知到高级应用，循序渐进\n2️⃣ 场景丰富，涵盖值场、聚会、饭局、日常等各类社交场景的应对方式\n3️⃣ 实操性强，每个方式都配有具体案例和可直接使用的话术模板\n4️⃣ 资料齐全，附赠电子书、思维导图等学习工具",
-
-                "指南具体包含：\n1️⃣ 67堂实战内容+20万字深度内容，不讲虚的，只讲能马上用的方式\n2️⃣ 多场景应用，值场社交、朋友聚会、正式饭局、日常闲聊全覆盖\n3️⃣ 案例+话术双保险，既有真实案例让你理解，又有现成话术让你模仿\n4️⃣ 学习资料齐全，赠送电子书、思维导图等配套工具",
-
-                "这套手册的优势：\n1️⃣ 内容充实，20万字精华+67个实战专题，系统全面，学完就能用\n2️⃣ 场景实用，覆盖值场、社交、聚餐、应酬等各类真实场景\n3️⃣ 方式具体，每个方式都有详细的步骤说明和可复制的话术模板\n4️⃣ 赠品丰富，额外附送电子书、思维导图等学习辅助材料",
-
-                "手册包含什么内容：\n1️⃣ 系统化内容，67个主题20万字，从心态建设到实战话术，全方位变好\n2️⃣ 真实场景还原，值场、聚会、饭局、日常等场景的具体应对策略\n3️⃣ 案例丰富详细，大量真实对话案例+可直接套用的万能公式\n4️⃣ 配套资料完善，赠送电子书、思维导图等辅助学习工具",
-
-                "指南的特色和亮点：\n1️⃣ 内容翔实，20万字干货分成67节内容，每节内容都聚焦一个实战场景\n2️⃣ 覆盖全面，从值场到社交，从闲聊到正式场合，各种情况都有方式\n3️⃣ 学习容易，配有大量对话案例和话术模板，看懂就能用\n4️⃣ 资源配套，附赠电子书、思维导图等学习资料"
-            ],
-
-            targetAudience: [
-                "这份手册适合谁用？\n1️⃣ 内向者/社恐：害怕主动社交，想摆脱紧张和尴尬\n2️⃣ 值场新人：不懂规则，想要晋升却不懂向上管理\n3️⃣ 沟通小白：说话直来直去，常被误会，想变好表达方式\n4️⃣ 敏感型人格：过度在意他人看法，容易内耗，想学会自我调节\n5️⃣ 老实人：不会拒绝，总被占便宜，想学会保护自己\n6️⃣ 想变好影响力的人：希望建立高质量人脉，向上社交",
-
-                "适合哪些人学习：\n1️⃣ 社交焦虑者：不敢主动和人打交道，希望克服紧张感，自然融入社交场合\n2️⃣ 初入社会的新人：对人情世故一知半解，想快速适应社会规则\n3️⃣ 表达困难者：不知道怎么说话才得体，经常说错话得罪人，想变好沟通能力\n4️⃣ 容易想太多的人：总是过分在意别人的评价，希望学会放下包袱\n5️⃣ 不懂拒绝的人：总是被人占便宜，想学会保护自己的边界\n6️⃣ 想拓展人脉的人：希望认识更多优质的人，建立有价值的社交圈",
-
-                "这套指南特别适合：\n1️⃣ 性格内向的朋友：不喜欢社交但又不得不社交，想找到舒适的社交方式\n2️⃣ 刚工做的朋友：初入社会不懂规矩，想快速学会基本的人情世故\n3️⃣ 不会说话的朋友：经常因为不会表达而误会或得罪人，想变好说话水平\n4️⃣ 玻璃心的朋友：太在意别人的看法，想建立强大的内心\n5️⃣ 心软的朋友：不好意思拒绝别人，经常委屈自己，想学会say no\n6️⃣ 想变好的朋友：希望扩大社交圈，认识更高层次的人",
-
-                "如果你是以下情况，这份指南会很有邦助：\n1️⃣ 社交恐惧/内向性格：害怕人多的场合，想学会在社交中更自在\n2️⃣ 新人小白：刚进入社会，不懂那些不成文的规矩和潜规则\n3️⃣ 表达能力弱：不知道怎么聊天，经常冷场或说错话\n4️⃣ 敏感多虑：总担心别人怎么看自己，想要更自信一些\n5️⃣ 不会拒绝：总是被人麻烦，自己却不好意思say no\n6️⃣ 想扩展圈子：希望认识更多有价值的人，变好人脉质量",
-
-                "特别推荐给这几类朋友：\n1️⃣ 社恐/i人：不擅长社交但工做生活又离不开，想找到适合自己的社交方式\n2️⃣ 应届生/新人：刚进社会懵懵懂懂，想快速了解人情世故的基本规则\n3️⃣ 表达直白者：说话不会拐弯，容易无意中得罪人，想学会委婉表达\n4️⃣ 情绪敏感者：容易被别人的评价影响，想学会调节心态\n5️⃣ 边界感弱者：不懂拒绝，总是被占便宜，想学会守护自己\n6️⃣ 人脉拓展者：想认识更多优质的人，建立有质量的社交网络",
-
-                "这份指南适合：\n1️⃣ 社交小白：完全不懂社交规则，想从零开始学习\n2️⃣ 值场新手：刚开始工做，不了解单位文化和规矩\n3️⃣ 沟通困难户：不知道怎么和人聊天，经常陷入尴尬\n4️⃣ 内心敏感者：太在意别人的看法，经常自我怀疑\n5️⃣ 不会say no的人：总是答应别人的请求，自己却很累\n6️⃣ 想认识更多人：希望扩大社交范围，结识优质人脉",
-
-                "推荐给以下几类人：\n1️⃣ 害怕社交的人：不知道怎么和陌生人打交道，想克服恐惧\n2️⃣ 新入值场的人：不懂单位潜规则，想快速适应环境\n3️⃣ 不会聊天的人：聊天总是接不下去，想学会延续话题\n4️⃣ 容易受伤的人：别人一句话就能影响心情，想变得坚强\n5️⃣ 太好说话的人：不懂拒绝别人，想学会保护自己\n6️⃣ 想向上走的人：希望认识更高层次的人，拓展人脉",
-
-                "如果你有这些困扰，建议看看：\n1️⃣ 社交焦虑：在人多的场合就紧张，不知道说什么\n2️⃣ 值场迷茫：不懂单位规矩，经常做错事\n3️⃣ 表达笨拙：想说的话说不出来，或者说出来效果不好\n4️⃣ 内心脆弱：太在意别人的眼光，活得很累\n5️⃣ 不会拒绝：总是被人麻烦，自己却不好意思说不\n6️⃣ 想扩展圈子：希望认识更多有用的人",
-
-                "这些人特别需要：\n1️⃣ 社恐患者：害怕社交但又必须社交，想找到舒适的相处方式\n2️⃣ 值场萌新：对单位规则一无所知，想快速上手\n3️⃣ 话题终结者：聊天总是冷场，想学会接话\n4️⃣ 玻璃心：别人随便一句话就能伤到，想变得强大\n5️⃣ 老好人：不会拒绝任何人，想学会说不\n6️⃣ 人脉建设者：想认识更多有价值的人",
-
-                "适合这些情况的朋友：\n1️⃣ 不敢社交：看到陌生人就紧张，想学会自然交流\n2️⃣ 初入社会：不懂人情世故，想快速学习\n3️⃣ 不会表达：有想法但说不清楚，想变好表达\n4️⃣ 太敏感：总是想太多，想学会放轻松\n5️⃣ 太好说话：总是被人利用，想学会保护自己\n6️⃣ 想认识人：希望扩大社交圈，认识更多朋友",
-
-                "特别适合以下人群：\n1️⃣ 社交困难者：不知道怎么和人相处，想找到方式\n2️⃣ 新人：刚开始工做，需要快速了解规则\n3️⃣ 表达障碍者：说话总是词不达意，想变好\n4️⃣ 敏感人群：容易受到伤害，想建立强大内心\n5️⃣ 不会拒绝者：总是答应别人，想学会say no\n6️⃣ 社交拓展者：想认识更多优质人脉",
-
-                "如果你符合以下描述：\n1️⃣ 社恐/内向：不喜欢人多的场合，但又不得不参加\n2️⃣ 新手：刚进入社会或新单位，不懂规矩\n3️⃣ 不善言辞：不知道怎么说话，经常说错\n4️⃣ 敏感脆弱：太在意别人的评价，容易受伤\n5️⃣ 心软：不会拒绝别人，经常委屈自己\n6️⃣ 想发展：希望认识更多人，扩大影响力"
-            ],
-
-            cta: [
-                "❗️❗️需要的可以前往主页店铺领取 🛒🛒🛒",
-                "🔍 指南已上架我的小红书店铺，需要的可以去看看",
-                "📚 想要的话，可以到我主页店铺查看详情",
-                "💡 感兴趣的朋友，欢迎来我的店铺了解一下",
-                "🎯 指南在我主页店铺里，有需要的可以自取",
-                "✨ 需要这份指南的，可以去我主页店铺找找",
-                "🌟 感兴趣就来我的小红书店铺看看吧",
-                "💫 指南在我店铺里，欢迎来了解"
-            ]
+            ENDING: `\n\n💡 这份《普通人社会化指南》能帮你什么？\n\n1️⃣ 全套干货：20万字 + 67节系统课，不讲空话，只教方法。\n2️⃣ 全景覆盖：从饭局应酬到值场晋升，从拒绝内耗到向上社交。\n3️⃣ 实战工具：附赠超全思维导图（电子版），拿来就能用。\n\n👥 这套指南适合谁？\n\n✅ 社恐/内向者：害怕社交，想摆脱紧张尴尬\n✅ 值场老实人：不懂拒绝，总被拿捏，想建立边界\n✅ 沟通小白：说话直来直去，常得罪人，想提高情商\n\n❗️❗️ 需要的宝子，直接去我主页店铺带走 🛒🛒🛒`
         };
 
-        const XIAOHONGSHU_HOT_KEYWORDS = {
-            '社交': ['社交焦虑', '社恐自救', '社交方式', '社交达人', '社交能力'],
-            '接话': ['接话方式', '接话能力', '聊天方式', '聊天话术', '话题延续'],
-            '人情世故': ['人情世故', '值场人情世故', '人情往来', '高情商', '为人处事'],
-            '通用': ['实用干货', '生活智慧', '成长笔记', '自我变好', '个人成长']
-        };
-
-        const CONTENT_KEYWORD_MAP = {
-            '接话': ['接话', '聊天', '对话', '交谈', '话题'],
-            '人情世故': ['人情', '世故', '礼尚往来', '送礼', '回礼'],
-            '社交': ['社交', '社恐', '交际', '人际', '关系']
-        };
+        function randomPickMultiple(array, count) { 
+            return array.sort(() => 0.5 - Math.random()).slice(0, count); 
+        }
 
         function randomPick(array) {
-            if (!array || array.length === 0) return '';
             return array[Math.floor(Math.random() * array.length)];
         }
 
-        function randomPickMultiple(array, count) {
-            if (!array || array.length === 0) return [];
-            const shuffled = [...array].sort(() => 0.5 - Math.random());
-            return shuffled.slice(0, Math.min(count, array.length));
+        function saveUserApiKey() {
+            const key = document.getElementById('userApiKey').value.trim();
+            if (!key.startsWith('sk-')) return showStatus('apiStatus', '❌ Key 格式错误', 'error');
+            localStorage.setItem('user_api_key', key);
+            showStatus('apiStatus', '✅ Key 已保存', 'success');
+            setTimeout(() => { 
+                document.getElementById('assignSection').classList.remove('hidden');
+                document.getElementById('generateSection').classList.remove('hidden'); 
+            }, 500);
         }
 
-        function filterSensitiveWords(text) {
-            let filtered = text;
-            for (const [word, replacement] of Object.entries(CONFIG.SENSITIVE_WORDS)) {
-                filtered = filtered.replace(new RegExp(word, 'g'), replacement);
-            }
-            return filtered;
+        function downloadBlankTemplate() {
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['标题']]), "空白模板");
+            XLSX.writeFile(wb, '步骤1_空白模板.xlsx');
         }
 
-        function generateSEOTags(title, topic, content) {
-            const tags = [];
-            const priorityWords = ['人情世故', '社会化', '社交智慧', '接话能力', '高情商'];
-            
-            for (const word of priorityWords) {
-                if (title.includes(word) && !tags.includes(word)) {
-                    tags.push(word);
-                    if (tags.length >= 2) break;
-                }
-            }
-            
-            const topicHotWords = XIAOHONGSHU_HOT_KEYWORDS[topic] || XIAOHONGSHU_HOT_KEYWORDS['通用'];
-            const selectedHotWords = randomPickMultiple(topicHotWords, 3);
-            tags.push(...selectedHotWords);
-            
-            const topicKeywords = CONTENT_KEYWORD_MAP[topic] || [];
-            for (const word of topicKeywords) {
-                const count = (content.match(new RegExp(word, 'g')) || []).length;
-                if (count > 0 && !tags.includes(word)) {
-                    tags.push(word);
-                    if (tags.filter(t => topicKeywords.includes(t)).length >= 2) break;
-                }
-            }
-            
-            tags.push('普通人社会化指南');
-            const uniqueTags = [...new Set(tags)];
-            const finalTags = uniqueTags.slice(0, 8);
-            
-            while (finalTags.length < 8) {
-                const fillerWord = randomPick(XIAOHONGSHU_HOT_KEYWORDS['通用']);
-                if (!finalTags.includes(fillerWord)) {
-                    finalTags.push(fillerWord);
-                }
-            }
-            
-            return finalTags.map(tag => `#${tag}`).join(' ');
+        // ✅ 修复1：智能分配3种模板类型
+        function handleAssignFile() {
+            const f = document.getElementById('assignFile').files[0];
+            if (!f) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const wb = XLSX.read(e.target.result, { type: 'array' });
+                const data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                
+                const results = data.map((r, i) => {
+                    // 随机分配模板类型
+                    const templateType = randomPick(CONFIG.TEMPLATE_TYPES);
+                    return {
+                        '序号': i+1, 
+                        '标题': r['标题'], 
+                        '模板类型': templateType,  // ← 新增
+                        '选题': '社会化', 
+                        '生成数量': 1 
+                    };
+                });
+                
+                const newWb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(newWb, XLSX.utils.json_to_sheet(results), "分配结果");
+                XLSX.writeFile(newWb, `分配结果_${Date.now()}.xlsx`);
+                showStatus('assignFileInfo', `✅ 分配完成！已为 ${results.length} 条标题分配模板类型`, 'success');
+            };
+            reader.readAsArrayBuffer(f);
         }
 
-        function generateTemplate1(title, topic) {
-            const intro = randomPick(VARIANTS.personalIntro);
-            const change = randomPick(VARIANTS.changeProcess);
-            const hope = randomPick(VARIANTS.hopeMessage);
-            const highlights = randomPick(VARIANTS.highlights);
-            const audience = randomPick(VARIANTS.targetAudience);
-            const cta = randomPick(VARIANTS.cta);
+        // ✅ 修复1+2：根据模板类型生成不同结构的文案，并修复空行
+        async function generateSocial(row) {
+            const mode = document.getElementById('contentLength').value;
+            const templateType = row['模板类型'] || '观察式'; // 读取模板类型
             
-            const opening = "很多i人宝宝都面临着社交方面的困扰";
-            
-            let content = `${opening}，${intro}。\n\n${change}\n\n${hope}\n\n${highlights}\n\n${audience}\n\n${cta}`;
-            
-            content = filterSensitiveWords(content);
-            const tags = generateSEOTags(title, topic, content);
-            
-            return content + '\n\n' + tags;
-        }
+            const ADULT_CONSTRAINT = `
+【重要设定】
+1. **目标读者**：20-30岁的职场新人、大学生、或有社交困扰的成年人。
+2. **严禁场景**：绝对不要写幼儿园、带娃、老师表扬、放学回家等低幼场景！请写职场、聚会、饭局。
+3. **语气风格**：成熟、知性、清醒、有深度的职场/社交导师。`;
 
-        function generateTemplate3(title, topic) {
-            const intro = randomPick(VARIANTS.personalIntro);
-            const change = randomPick(VARIANTS.changeProcess);
-            const highlights = randomPick(VARIANTS.highlights);
-            const audience = randomPick(VARIANTS.targetAudience);
-            const cta = randomPick(VARIANTS.cta);
+            // ✅ 根据模板类型选择不同的Prompt
+            let templatePrompt = '';
             
-            let content = `很多i人宝宝都面临着社交方面的困扰，${intro}。\n\n${change}\n\n${highlights}\n\n${audience}\n\n${cta}`;
-            
-            content = filterSensitiveWords(content);
-            const tags = generateSEOTags(title, topic, content);
-            
-            return content + '\n\n' + tags;
-        }
-
-        function generateContent(title, topic, templateType) {
-            if (templateType === '模板3' || templateType === '模板3-方法干货式') {
-                return generateTemplate3(title, topic);
+            if (templateType === '观察式') {
+                templatePrompt = mode === 'long' 
+                    ? `【观察式-深度版】以观察者视角，先提出现象（60字），再分析3个深层原因[一R][二R][三R]，每点150字，共600-650字。`
+                    : `【观察式-标准版】观察现象（20字）+ 3个要点[一R][二R][三R]，每点60字，共280-320字。`;
+            } else if (templateType === '故事式') {
+                templatePrompt = mode === 'long'
+                    ? `【故事式-深度版】讲述一个成年人社交故事（80字），再分3个阶段/转折点[一R][二R][三R]，每点140字，共600-650字。`
+                    : `【故事式-标准版】简短故事引入（30字）+ 3个关键点[一R][二R][三R]，每点60字，共280-320字。`;
             } else {
-                return generateTemplate1(title, topic);
+                templatePrompt = mode === 'long'
+                    ? `【方法式-深度版】直接给出解决方案，3个方法[一R][二R][三R]，每个方法包含原理+步骤，每点180字，共600-650字。`
+                    : `【方法式-标准版】3个简洁方法[一R][二R][三R]，每个方法70字含步骤，共280-320字。`;
+            }
+
+            const finalPrompt = `你是一位职场社交导师。请为标题《${row['标题']}》写一篇干货正文（不要结尾）。
+${ADULT_CONSTRAINT}
+${templatePrompt}
+【禁令】禁止英文、敏感词、不要写结尾。`;
+
+            const maxTokens = (mode === 'long') ? 1200 : 600;
+
+            const userKey = localStorage.getItem('user_api_key');
+            const response = await fetch(CONFIG.API_BASE_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userKey}` },
+                body: JSON.stringify({
+                    model: CONFIG.MODEL,
+                    messages: [{ role: "user", content: finalPrompt }],
+                    temperature: 0.85, 
+                    max_tokens: maxTokens
+                })
+            });
+            const data = await response.json();
+            let content = data.choices[0].message.content;
+            
+            // 清理格式
+            let body = content.replace(/\*\*/g, "").replace(/\b[A-Za-z]{2,}\b/g, ""); 
+            body = body.replace(/\[1\]/g, "[一R]").replace(/\[2\]/g, "[二R]").replace(/\[3\]/g, "[三R]");
+            body = body.replace(/([^\n])\[([一二三]R)\]/g, "$1\n\n[$2]");
+            
+            // 移除可能的标题行
+            const lines = body.split('\n');
+            if (lines.length > 0) {
+                const firstLine = lines[0].trim();
+                if (firstLine.includes('标题：') || firstLine.includes('小红书标题') || firstLine === row['标题']) {
+                    lines.shift();
+                    if (lines.length > 0 && (lines[0].trim().includes('正文：') || lines[0].trim() === '正文')) lines.shift();
+                    body = lines.join('\n').trim();
+                }
+            }
+
+            let full = body + CONFIG.ENDING;
+            
+            // 敏感词过滤
+            for (const [key, val] of Object.entries(CONFIG.SENSITIVE_WORDS)) {
+                full = full.replace(new RegExp(key, 'g'), val);
+            }
+            
+            // ✅ 修复2：使用特殊标记符作为空行占位符
+            // Excel会识别这个符号，复制到小红书后也会保留空行
+            full = full.replace(/\n\n/g, '\n⠀\n'); // ⠀ 是盲文空格 (U+2800)
+            
+            // 生成标签
+            let tags = ['#普通人社会化指南', '#人情世故'];
+            tags.push(...randomPickMultiple(CONFIG.KEYWORDS.work, 3).map(t=>'#'+t));
+            tags.push(...randomPickMultiple(CONFIG.KEYWORDS.social, 3).map(t=>'#'+t));
+            tags.push(...randomPickMultiple(CONFIG.KEYWORDS.growth, 2).map(t=>'#'+t));
+            
+            return { 
+                title: row['标题'], 
+                templateType: templateType,  // ← 返回模板类型
+                body: full, 
+                tags: tags.slice(0,10).join(' ') 
+            };
+        }
+
+        // 历史记录管理
+        let excelData = null;
+        let isPaused = false;
+        let pauseRequested = false;
+        let currentResults = [];
+
+        function saveToHistory(results) {
+            try {
+                const now = new Date().toLocaleString();
+                localStorage.setItem('xhs_last_results', JSON.stringify(results));
+                localStorage.setItem('xhs_last_time', now);
+                document.getElementById('lastSavedTime').textContent = now;
+            } catch (e) {
+                console.warn("存储空间不足", e);
             }
         }
 
-        // 页面切换
-        function showHelp() {
-            document.getElementById('mainPage').classList.add('hidden');
-            document.getElementById('helpPage').classList.remove('hidden');
+        function recoverLastSession() {
+            const stored = localStorage.getItem('xhs_last_results');
+            if (!stored) { alert("没有找到历史记录！"); return; }
+            const results = JSON.parse(stored);
+            if (results.length === 0) { alert("历史记录为空"); return; }
+            
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(results), "恢复的历史记录");
+            XLSX.writeFile(wb, `历史记录恢复_${Date.now()}.xlsx`);
+            alert(`已成功恢复并下载 ${results.length} 条记录`);
+        }
+        
+        function manualDownloadCurrent() {
+            if (currentResults.length === 0) { alert("当前没有可导出的内容"); return; }
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(currentResults), "手动导出");
+            XLSX.writeFile(wb, `手动导出进度_${Date.now()}.xlsx`);
         }
 
-        function showMain() {
-            document.getElementById('mainPage').classList.remove('hidden');
-            document.getElementById('helpPage').classList.add('hidden');
+        function handleFileSelect() {
+            const f = document.getElementById('excelFile').files[0];
+            if(!f) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const wb = XLSX.read(e.target.result, { type: 'array' });
+                excelData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                if (!excelData[0]['标题']) {
+                    showStatus('fileInfo', '❌ 错误：请上传含【标题】列的Excel', 'error');
+                } else {
+                    showStatus('fileInfo', `✅ 已加载 ${excelData.length} 条任务`, 'success');
+                    document.getElementById('generateBtn').disabled = false;
+                }
+            };
+            reader.readAsArrayBuffer(f);
         }
 
-        // 激活功能
+        async function startGeneration() {
+            const userKey = localStorage.getItem('user_api_key');
+            if (!userKey) { alert("请先配置Key"); return; }
+            
+            isPaused = false;
+            pauseRequested = false;
+            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('pauseBtn').style.display = 'inline-block';
+            document.getElementById('manualDownloadBtn').classList.remove('hidden');
+            document.getElementById('progressContainer').classList.remove('hidden');
+            const log = document.getElementById('log'); log.innerHTML = '';
+            
+            currentResults = [];
+            const total = excelData.length;
+
+            for (let i = 0; i < total; i++) {
+                if (pauseRequested) {
+                    isPaused = true;
+                    manualDownloadCurrent();
+                    log.innerHTML += `<div class="log-item" style="background:#fff3cd; color:#856404; font-weight:bold;">⏸️ 任务暂停，已导出当前进度</div>`;
+                    log.scrollTop = log.scrollHeight;
+                    document.getElementById('pauseBtn').innerText = "▶️ 继续";
+                    return; 
+                }
+
+                const row = excelData[i];
+                if (!row['标题']) continue;
+
+                log.innerHTML += `<div class="log-item">[${i+1}/${total}] 模板：${row['模板类型'] || '观察式'} | 标题：${row['标题']}...</div>`;
+                log.scrollTop = log.scrollHeight;
+
+                try {
+                    let res = await generateSocial(row);
+                    const newRow = {
+                        '序号': i+1, 
+                        '模板类型': res.templateType,  // ← 保存模板类型
+                        '原标题': row['标题'],
+                        '生成文案': res.body, 
+                        '话题': res.tags, 
+                        '字数': res.body.replace(/⠀/g, '').length  // 计算真实字数（不含空格符）
+                    };
+                    currentResults.push(newRow);
+                    
+                    saveToHistory(currentResults);
+
+                    log.innerHTML += `<div class="log-item" style="color: green; font-weight: bold;">✅ 成功 (${newRow['字数']}字) - 已备份</div>`;
+                    document.getElementById('progressFill').style.width = ((i+1)/total*100) + '%';
+                } catch (e) {
+                    console.error(e);
+                    log.innerHTML += `<div class="log-item" style="color:red; font-weight:bold;">❌ 失败: ${e.message}</div>`;
+                }
+                
+                await new Promise(r => setTimeout(r, 1000));
+            }
+
+            manualDownloadCurrent();
+            
+            document.getElementById('generateBtn').disabled = false;
+            document.getElementById('pauseBtn').style.display = 'none';
+            document.getElementById('manualDownloadBtn').classList.add('hidden');
+            log.innerHTML += `<div class="log-item" style="background:#d4edda; color:#155724; padding:10px;">🎉 全部完成！</div>`;
+        }
+
+        function pauseGeneration() { 
+            if(isPaused) { 
+                isPaused = false;
+                pauseRequested = false;
+                document.getElementById('pauseBtn').innerText = "⏸️ 暂停";
+                startGeneration(); 
+            } else {
+                pauseRequested = true; 
+            }
+        }
+
+        // 激活码逻辑
+        function generateActivationCode(businessType, expireDate) {
+            const dateStr = expireDate.replace(/-/g, '');
+            const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+            const check = CryptoJS.MD5(businessType.toUpperCase() + dateStr + CONFIG.SECRET_KEY).toString().substring(0, 4).toUpperCase();
+            return `XHS-${businessType.toUpperCase()}-${dateStr}-${random}-${check}`;
+        }
+
+        function validateActivationCode(code) {
+            try {
+                const parts = code.trim().toUpperCase().split('-');
+                if (parts.length !== 5 || parts[0] !== 'XHS') return { valid: false, msg: "格式错误" };
+                const [_, business, dateStr, random, check] = parts;
+                const expectedCheck = CryptoJS.MD5(business + dateStr + CONFIG.SECRET_KEY).toString().substring(0, 4).toUpperCase();
+                if (check !== expectedCheck) return { valid: false, msg: "校验失败" };
+                const year = parseInt(dateStr.substring(0, 4));
+                const month = parseInt(dateStr.substring(4, 6)) - 1;
+                const day = parseInt(dateStr.substring(6, 8));
+                if (new Date() > new Date(year, month, day + 1)) return { valid: false, msg: "激活码已过期" };
+                return { valid: true, business: business, expireDate: `${year}-${month+1}-${day}`, msg: "激活成功" };
+            } catch (e) { return { valid: false, msg: "无效激活码" }; }
+        }
+
         function activate() {
-            const code = document.getElementById('activationCode').value.trim();
+            const code = document.getElementById('activationCode').value;
+            const result = validateActivationCode(code);
             const status = document.getElementById('activationStatus');
             
-            if (!code) {
-                showStatus(status, '请输入激活码', 'error');
-                return;
-            }
-            
-            if (code.startsWith('XHS-')) {
+            if (result.valid) {
                 localStorage.setItem('activation', JSON.stringify({
-                    code, business: '全功能版', expireDate: '2026-12-31'
+                    code: code, business: result.business, expireDate: result.expireDate
                 }));
-                
                 showStatus(status, '✅ 激活成功', 'success');
-                
                 setTimeout(() => {
                     document.getElementById('activationSection').classList.add('hidden');
                     document.getElementById('activatedInfo').classList.remove('hidden');
-                    document.getElementById('apiSection').classList.remove('hidden');
-                    document.getElementById('businessInfo').textContent = '全功能版';
-                    document.getElementById('expireInfo').textContent = '2026-12-31';
+                    document.getElementById('apiConfigSection').classList.remove('hidden');
+                    document.getElementById('businessInfo').textContent = result.business;
+                    document.getElementById('expireInfo').textContent = result.expireDate;
                 }, 1000);
             } else {
-                showStatus(status, '❌ 激活码格式错误', 'error');
+                showStatus(status, '❌ ' + result.msg, 'error');
             }
         }
 
         function resetActivation() {
             localStorage.removeItem('activation');
-            localStorage.removeItem('apiKey');
+            localStorage.removeItem('user_api_key');
             location.reload();
         }
 
-        function saveApiKey() {
-            const apiKey = document.getElementById('apiKey').value.trim();
-            const status = document.getElementById('apiStatus');
-            
-            if (!apiKey) {
-                showStatus(status, '请输入API Key', 'error');
-                return;
-            }
-            
-            localStorage.setItem('apiKey', apiKey);
-            showStatus(status, '✅ API Key已保存', 'success');
-            
-            setTimeout(() => {
-                document.getElementById('assignSection').classList.remove('hidden');
-                document.getElementById('generateSection').classList.remove('hidden');
-            }, 500);
+        function showAdminModal() { document.getElementById('adminModal').classList.add('show'); }
+        function closeAdminModal() { document.getElementById('adminModal').classList.remove('show'); }
+        function showStatus(id, msg, type) { 
+            const el = document.getElementById(id); 
+            el.textContent = msg; 
+            el.className = `status ${type}`; 
+            el.classList.remove('hidden'); 
         }
-
-        // 下载模板
-        function downloadBlankTemplate() {
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.aoa_to_sheet([['标题']]);
-            XLSX.utils.book_append_sheet(wb, ws, "空白模板");
-            XLSX.writeFile(wb, '步骤1_空白模板.xlsx');
-            addAssignLog('✅ 空白模板已下载');
-        }
-
-        function downloadStandardTemplate() {
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.aoa_to_sheet([
-                ['序号', '模板类型', '标题', '选题', '生成数量'],
-                [1, '模板1', '示例标题', '社交', 1]
-            ]);
-            XLSX.utils.book_append_sheet(wb, ws, "标准模板");
-            XLSX.writeFile(wb, '步骤2_标准模板.xlsx');
-            addLog('✅ 标准模板已下载');
-        }
-
-        // 智能分配选题
-        let assignData = null;
-
-        function handleAssignFile() {
-            const file = document.getElementById('assignFile').files[0];
-            const status = document.getElementById('assignFileInfo');
-            
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                    assignData = XLSX.utils.sheet_to_json(sheet);
-                    
-                    if (!assignData[0] || !assignData[0]['标题']) {
-                        showStatus(status, '❌ Excel必须包含"标题"列', 'error');
-                        return;
-                    }
-                    
-                    showStatus(status, `✅ ${file.name} | ${assignData.length} 条`, 'success');
-                    
-                    document.getElementById('assignProgress').classList.remove('hidden');
-                    await startAssignment();
-                    
-                } catch (error) {
-                    showStatus(status, '❌ 读取失败：' + error.message, 'error');
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        async function startAssignment() {
-            const log = document.getElementById('assignLog');
-            log.innerHTML = '';
-            
-            addAssignLog(`📊 开始智能分配 ${assignData.length} 条`);
-            
-            const results = [];
-            const templates = ['模板1', '模板3'];
-            const topics = ['择言', '人情世故', '社交智慧', '玩卡攻', '防骗话', '适用'];
-            
-            for (let i = 0; i < assignData.length; i++) {
-                const title = assignData[i]['标题'] || '';
-                const template = randomPick(templates);
-                const topic = randomPick(topics);
-                
-                results.push({
-                    '序号': i + 1,
-                    '模板类型': template,
-                    '标题': title,
-                    '选题': topic,
-                    '生成数量': 1
-                });
-                
-                updateAssignProgress(Math.round((i + 1) / assignData.length * 100));
-                addAssignLog(`✓ [${i+1}/${assignData.length}] ${title.substring(0, 30)}...`);
-            }
-            
-            // 下载结果
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet(results);
-            XLSX.utils.book_append_sheet(wb, ws, "分配结果");
-            
-            const timestamp = new Date().toISOString().replace(/[:-]/g, '').split('.')[0];
-            XLSX.writeFile(wb, `选题分配结果_${timestamp}.xlsx`);
-            
-            addAssignLog('\n✅ 智能分配完成！文件已自动下载。');
-            addAssignLog('📌 下一步操作：\n1. 打开下载的Excel文件\n2. 如需修改"生成数量"为2、3等\n3. 保存后上传到【步骤2：批量生成】区域');
-        }
-
-        function updateAssignProgress(percent) {
-            const fill = document.getElementById('assignProgressFill');
-            fill.style.width = percent + '%';
-            fill.textContent = Math.round(percent) + '%';
-        }
-
-        function addAssignLog(message) {
-            const log = document.getElementById('assignLog');
-            const item = document.createElement('div');
-            item.className = 'log-item';
-            item.textContent = message;
-            log.appendChild(item);
-            log.scrollTop = log.scrollHeight;
-        }
-
-        // 批量生成
-        let excelData = null;
-        let isPaused = false;
-        let currentIndex = 0;
         
-        function handleFileSelect() {
-            const file = document.getElementById('excelFile').files[0];
-            const status = document.getElementById('fileInfo');
-            
-            if (!file) {
-                status.classList.add('hidden');
-                document.getElementById('generateBtn').disabled = true;
-                return;
+        function adminLogin() { 
+            if(document.getElementById('adminPassword').value === CONFIG.ADMIN_PASSWORD) { 
+                document.getElementById('adminLogin').classList.add('hidden'); 
+                document.getElementById('adminPanel').classList.remove('hidden'); 
+            } else {
+                alert('密码错误'); 
             }
-            
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                    excelData = XLSX.utils.sheet_to_json(sheet);
-                    
-                    if (!excelData[0] || !excelData[0]['标题']) {
-                        showStatus(status, '❌ Excel必须包含"标题"列', 'error');
-                        document.getElementById('generateBtn').disabled = true;
-                        return;
-                    }
-                    
-                    showStatus(status, `✅ ${file.name} | ${excelData.length} 条`, 'success');
-                    document.getElementById('generateBtn').disabled = false;
-                } catch (error) {
-                    showStatus(status, '❌ 读取失败：' + error.message, 'error');
-                    document.getElementById('generateBtn').disabled = true;
-                }
-            };
-            reader.readAsArrayBuffer(file);
         }
-
-        async function startGeneration() {
-            if (!excelData) return;
-            
-            currentIndex = 0;
-            isPaused = false;
-            
-            document.getElementById('generateBtn').classList.add('hidden');
-            document.getElementById('pauseBtn').classList.remove('hidden');
-            document.getElementById('progressContainer').classList.remove('hidden');
-            
-            const log = document.getElementById('log');
-            log.innerHTML = '';
-            
-            const validData = excelData.filter(row => {
-                const title = (row['标题'] || '').toString().trim();
-                return title.length > 0;
-            });
-            
-            if (validData.length === 0) {
-                addLog('❌ 没有有效标题！');
-                return;
-            }
-            
-            addLog(`📊 共${validData.length}条`);
-            
-            const results = [];
-            const apiKey = localStorage.getItem('apiKey');
-            
-            for (let i = currentIndex; i < validData.length; i++) {
-                if (isPaused) {
-                    currentIndex = i;
-                    addLog('⏸️ 已暂停');
-                    return;
-                }
-                
-                const row = validData[i];
-                const title = row['标题'] || '';
-                const topic = row['选题'] || '通用';
-                const templateType = row['模板类型'] || '模板1';
-                const count = parseInt(row['生成数量']) || 1;
-                
-                addLog(`[${i+1}/${validData.length}] ${title.substring(0, 40)}...`);
-                
-                for (let j = 0; j < count; j++) {
-                    try {
-                        const content = generateContent(title, topic, templateType);
-                        const tagMatch = content.match(/(#[^\s#\n]+\s*){8}/);
-                        const tags = tagMatch ? tagMatch[0].trim() : '';
-                        const contentOnly = content.replace(/(#[^\s#\n]+\s*)+$/, '').trim();
-                        
-                        results.push({
-                            '序号': results.length + 1,
-                            '模板': templateType,
-                            '标题': title,
-                            '选题': topic,
-                            '文案': contentOnly,
-                            '话题': tags,
-                            '字数': contentOnly.length
-                        });
-                        
-                        addLog(`  ✓ 第${j+1}条 (${contentOnly.length}字)`);
-                    } catch (error) {
-                        results.push({
-                            '序号': results.length + 1,
-                            '模板': templateType,
-                            '标题': title,
-                            '选题': topic,
-                            '文案': `失败: ${error.message}`,
-                            '话题': '',
-                            '字数': 0
-                        });
-                        addLog(`  ✗ 第${j+1}条失败`);
-                    }
-                }
-                
-                updateProgress(Math.round((i + 1) / validData.length * 100));
-            }
-            
-            downloadExcel(results);
-            
-            document.getElementById('pauseBtn').classList.add('hidden');
-            document.getElementById('resumeBtn').classList.add('hidden');
-            document.getElementById('generateBtn').classList.remove('hidden');
-            document.getElementById('generateBtn').disabled = false;
-            
-            addLog('\n✅ 完成！');
+        
+        function generateCode() { 
+            const date = document.getElementById('expireDate').value; 
+            if(!date) return alert('选日期'); 
+            const code = generateActivationCode('all', date); 
+            document.getElementById('generatedCode').textContent = code; 
+            document.getElementById('codeDisplay').classList.remove('hidden'); 
         }
-
-        function pauseGeneration() {
-            isPaused = true;
-            document.getElementById('pauseBtn').classList.add('hidden');
-            document.getElementById('resumeBtn').classList.remove('hidden');
-        }
-
-        function resumeGeneration() {
-            isPaused = false;
-            document.getElementById('resumeBtn').classList.add('hidden');
-            document.getElementById('pauseBtn').classList.remove('hidden');
-            startGeneration();
-        }
-
-        function downloadExcel(data) {
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "结果");
-            
-            const timestamp = new Date().toISOString().replace(/[:-]/g, '').split('.')[0];
-            XLSX.writeFile(wb, `小红书文案_${timestamp}.xlsx`);
-        }
-
-        function showStatus(element, message, type) {
-            element.textContent = message;
-            element.className = `status ${type}`;
-            element.style.display = 'block';
-        }
-
-        function updateProgress(percent) {
-            const fill = document.getElementById('progressFill');
-            fill.style.width = percent + '%';
-            fill.textContent = Math.round(percent) + '%';
-        }
-
-        function addLog(message) {
-            const log = document.getElementById('log');
-            const item = document.createElement('div');
-            item.className = 'log-item';
-            
-            if (message.includes('✓')) item.classList.add('success');
-            if (message.includes('✗')) item.classList.add('error');
-            
-            item.textContent = message;
-            log.appendChild(item);
-            log.scrollTop = log.scrollHeight;
-        }
-
-        // 初始化
+        
         window.onload = function() {
-            const activation = localStorage.getItem('activation');
-            
-            if (activation) {
-                const info = JSON.parse(activation);
+            const lastTime = localStorage.getItem('xhs_last_time');
+            if (lastTime) { document.getElementById('lastSavedTime').textContent = lastTime; }
+
+            const act = JSON.parse(localStorage.getItem('activation'));
+            const key = localStorage.getItem('user_api_key');
+            if (act) {
                 document.getElementById('activationSection').classList.add('hidden');
                 document.getElementById('activatedInfo').classList.remove('hidden');
-                document.getElementById('apiSection').classList.remove('hidden');
-                document.getElementById('businessInfo').textContent = info.business;
-                document.getElementById('expireInfo').textContent = info.expireDate;
-                
-                const apiKey = localStorage.getItem('apiKey');
-                if (apiKey) {
-                    document.getElementById('apiKey').value = apiKey;
+                document.getElementById('apiConfigSection').classList.remove('hidden');
+                document.getElementById('businessInfo').textContent = act.business;
+                document.getElementById('expireInfo').textContent = act.expireDate;
+                if (key) { 
+                    document.getElementById('userApiKey').value = key; 
                     document.getElementById('assignSection').classList.remove('hidden');
-                    document.getElementById('generateSection').classList.remove('hidden');
+                    document.getElementById('generateSection').classList.remove('hidden'); 
                 }
             }
         };
