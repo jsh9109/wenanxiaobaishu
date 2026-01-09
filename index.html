@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小红书文案生成器 - v6.5 修复版</title>
+    <title>小红书文案生成器 - v7.0 终极版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
@@ -46,6 +46,11 @@
         .log-item { margin-bottom: 5px; padding: 5px; border-left: 3px solid #667eea; padding-left: 10px; }
         .history-bar { display: flex; align-items: center; justify-content: space-between; background: #fff3e0; padding: 10px 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ffe0b2; }
         .history-info { font-size: 13px; color: #e65100; }
+        .highlight-box { background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border: 2px solid #667eea; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .highlight-title { font-size: 16px; font-weight: bold; color: #667eea; margin-bottom: 10px; }
+        .feature-list { list-style: none; padding: 0; }
+        .feature-list li { padding: 8px 0; padding-left: 25px; position: relative; }
+        .feature-list li:before { content: "✨"; position: absolute; left: 0; }
     </style>
 </head>
 <body>
@@ -53,11 +58,12 @@
         <div class="header">
             <button class="admin-btn" onclick="window.location.reload()" style="left: 20px; right: auto;">🔄 刷新</button>
             <h1>🎨 小红书文案生成器</h1>
-            <p>v6.5 修复版 - 3种模板 | 空行修复 | 自动备份</p>
+            <p>v7.0 终极版 - 封面文字 | 场景化 | 话术库 | 750字</p>
             <button class="admin-btn" onclick="showAdminModal()">⚙️ 管理</button>
         </div>
         
         <div class="content">
+            <!-- 激活部分 -->
             <div class="section" id="activationSection">
                 <div class="section-title">🔑 软件激活</div>
                 <div class="form-group">
@@ -75,10 +81,11 @@
                 <button class="btn btn-secondary" onclick="resetActivation()">退出登录</button>
             </div>
 
+            <!-- API配置 -->
             <div class="section hidden" id="apiConfigSection">
                 <div class="section-title">🔌 API 配置 (Claude 3.5)</div>
                 <div class="info-box">
-                    <p>⚠️ 需用户自备 Key。本版本专门针对"社会化指南"优化。</p>
+                    <p>⚠️ 需用户自备 Key。v7.0专门针对"社会化指南"深度优化。</p>
                 </div>
                 <div class="form-group">
                     <label>API Key (以 sk- 开头)</label>
@@ -88,12 +95,13 @@
                 <div class="status hidden" id="apiStatus"></div>
             </div>
             
+            <!-- 步骤1：智能分配 -->
             <div class="section hidden" id="assignSection">
                 <div class="section-title">🔍 步骤1：智能分配选题</div>
                 <div class="info-box">
-                    <strong>✅ 修复说明：</strong><br>
-                    • 现在会智能分配3种模板类型（观察式、故事式、方法式）<br>
-                    • 确保文案有差异化，不再千篇一律
+                    <strong>✅ v7.0升级：</strong><br>
+                    • 智能分配3种模板类型（观察式、故事式、方法式）<br>
+                    • 确保文案结构有差异化
                 </div>
                 <div class="btn-group">
                     <button class="btn btn-secondary" onclick="downloadBlankTemplate()">📥 下载空白模板</button>
@@ -103,9 +111,23 @@
                 <div class="status hidden" id="assignFileInfo"></div>
             </div>
             
+            <!-- 步骤2：AI生成 -->
             <div class="section hidden" id="generateSection">
                 <div class="section-title">
                     <span>📝 步骤2：AI 批量生成</span>
+                </div>
+
+                <!-- v7.0新特性展示 -->
+                <div class="highlight-box">
+                    <div class="highlight-title">🚀 v7.0 核心升级</div>
+                    <ul class="feature-list">
+                        <li>自动生成封面文字（15-22字，智能改写）</li>
+                        <li>场景化开头（3个具体场景，强共鸣）</li>
+                        <li>个人故事引入（"我也是从XX过来的"）</li>
+                        <li>实战话术库（直接可用的对话模板）</li>
+                        <li>字数升级到750-850字（对标同行）</li>
+                        <li>空行完美保留（盲文空格技术）</li>
+                    </ul>
                 </div>
 
                 <div class="history-bar" id="historyBar">
@@ -120,8 +142,8 @@
                 <div class="form-group" style="background: #e7f3ff; padding: 15px; border-radius: 8px; border: 1px solid #b3d9ff;">
                     <label style="color: #0066cc;">🎯 篇幅选择</label>
                     <select id="contentLength">
-                        <option value="standard">🔵 标准版 (500-600字 | 完读率高)</option>
-                        <option value="long">🟣 深度版 (850-950字 | 收藏率高)</option>
+                        <option value="standard">🔵 标准版 (750-850字 | v7.0推荐)</option>
+                        <option value="long">🟣 深度版 (950-1050字 | 收藏率高)</option>
                     </select>
                 </div>
 
@@ -145,6 +167,7 @@
         </div>
     </div>
 
+    <!-- 管理员面板 -->
     <div class="modal" id="adminModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -193,12 +216,109 @@
                 'growth': ['个人成长', '成长', '自我提升', '思维提升', '认知觉醒']
             },
 
-            // ✅ 修复1：添加3种模板类型
             TEMPLATE_TYPES: ['观察式', '故事式', '方法式'],
+
+            // v7.0: 封面文字同义词库
+            SYNONYMS: {
+                '太少': '不足', '不够': '不足', '太低': '不足',
+                '说白了': '其实是', '原来是': '其实是',
+                '接不住话': '不会接话', '捷径': '秘诀',
+                '训练': '练习'
+            },
+
+            // v7.0: 封面文字固定话术模板
+            COVER_TEMPLATES: [
+                '希望对{pain}的宝宝一些帮助！',
+                '给{pain}的宝子一些帮助！',
+                '{pain}必看！人情世故每天懂一点',
+                '想提高{pain}的宝宝看过来！'
+            ],
 
             ENDING: `\n\n💡 这份《普通人社会化指南》能帮你什么？\n\n1️⃣ 全套干货：20万字 + 67节系统课，不讲空话，只教方法。\n2️⃣ 全景覆盖：从饭局应酬到值场晋升，从拒绝内耗到向上社交。\n3️⃣ 实战工具：附赠超全思维导图（电子版），拿来就能用。\n\n👥 这套指南适合谁？\n\n✅ 社恐/内向者：害怕社交，想摆脱紧张尴尬\n✅ 值场老实人：不懂拒绝，总被拿捏，想建立边界\n✅ 沟通小白：说话直来直去，常得罪人，想提高情商\n\n❗️❗️ 需要的宝子，直接去我主页店铺带走 🛒🛒🛒`
         };
 
+        // ========== 封面文字生成函数 ==========
+        function generateCoverText(title) {
+            const len = title.length;
+            
+            // 策略1: 标题14-20字且吸引人，直接用（24%）
+            if (len >= 14 && len <= 20 && isAttractive(title)) {
+                return title;
+            }
+            
+            // 策略2: 判断是否太理论（10%用固定话术）
+            if (isTheoryTitle(title)) {
+                const pain = extractPainPoint(title);
+                const template = CONFIG.COVER_TEMPLATES[Math.floor(Math.random() * CONFIG.COVER_TEMPLATES.length)];
+                let cover = template.replace('{pain}', pain);
+                // 确保不超过22字
+                if (cover.length > 22) cover = cover.substring(0, 22);
+                return cover;
+            }
+            
+            // 策略3: 改写变体（66%主力）
+            return rewriteTitle(title);
+        }
+
+        function isAttractive(title) {
+            // 判断标题是否吸引人
+            const hooks = ['不会', '为什么', '如何', '秘诀', '你知道', '感觉', '其实'];
+            return hooks.some(hook => title.includes(hook));
+        }
+
+        function isTheoryTitle(title) {
+            const theoryWords = ['指南', '原理', '本质', '往往', '承担', '影响'];
+            return theoryWords.some(word => title.includes(word));
+        }
+
+        function extractPainPoint(title) {
+            // 提取核心痛点
+            if (title.includes('不会接话')) return '不会接话';
+            if (title.includes('社交')) return '社交中迷茫';
+            if (title.includes('社会化')) return '社会化程度低';
+            if (title.includes('主见')) return '没主见';
+            if (title.includes('内向')) return '内向社恐';
+            return '社会化程度低';
+        }
+
+        function rewriteTitle(title) {
+            let cover = title;
+            
+            // 方法1: 同义词替换（40%）
+            if (Math.random() < 0.4) {
+                for (const [old, newWord] of Object.entries(CONFIG.SYNONYMS)) {
+                    cover = cover.replace(old, newWord);
+                }
+                // 调整标点
+                if (!cover.includes('！') && !cover.includes('？')) {
+                    cover += '！';
+                }
+            }
+            // 方法2: 转疑问句（30%）
+            else if (Math.random() < 0.7) {
+                if (cover.includes('是')) {
+                    cover = `你知道${cover.split('是')[0]}吗？`;
+                } else {
+                    cover = cover + '？';
+                }
+            }
+            // 方法3: 标点调整（30%）
+            else {
+                // 调整逗号位置
+                cover = cover.replace('，', '').replace('。', '');
+                const mid = Math.floor(cover.length / 2);
+                cover = cover.substring(0, mid) + '，' + cover.substring(mid) + '！';
+            }
+            
+            // 确保标题≤20字，封面≤22字
+            if (cover.length > 22) {
+                cover = cover.substring(0, 22);
+            }
+            
+            return cover;
+        }
+
+        // ========== 辅助函数 ==========
         function randomPickMultiple(array, count) { 
             return array.sort(() => 0.5 - Math.random()).slice(0, count); 
         }
@@ -224,7 +344,6 @@
             XLSX.writeFile(wb, '步骤1_空白模板.xlsx');
         }
 
-        // ✅ 修复1：智能分配3种模板类型
         function handleAssignFile() {
             const f = document.getElementById('assignFile').files[0];
             if (!f) return;
@@ -234,12 +353,11 @@
                 const data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
                 
                 const results = data.map((r, i) => {
-                    // 随机分配模板类型
                     const templateType = randomPick(CONFIG.TEMPLATE_TYPES);
                     return {
                         '序号': i+1, 
                         '标题': r['标题'], 
-                        '模板类型': templateType,  // ← 新增
+                        '模板类型': templateType,
                         '选题': '社会化', 
                         '生成数量': 1 
                     };
@@ -253,40 +371,45 @@
             reader.readAsArrayBuffer(f);
         }
 
-        // ✅ 修复1+2：根据模板类型生成不同结构的文案，并修复空行
+        // ========== v7.0核心生成函数 ==========
         async function generateSocial(row) {
             const mode = document.getElementById('contentLength').value;
-            const templateType = row['模板类型'] || '观察式'; // 读取模板类型
+            const templateType = row['模板类型'] || '观察式';
             
             const ADULT_CONSTRAINT = `
 【重要设定】
 1. **目标读者**：20-30岁的职场新人、大学生、或有社交困扰的成年人。
-2. **严禁场景**：绝对不要写幼儿园、带娃、老师表扬、放学回家等低幼场景！请写职场、聚会、饭局。
-3. **语气风格**：成熟、知性、清醒、有深度的职场/社交导师。`;
+2. **严禁场景**：绝对不要写幼儿园、带娃、老师表扬等低幼场景！请写职场、聚会、饭局。
+3. **语气风格**：成熟、知性、清醒的职场/社交导师。`;
 
-            // ✅ 根据模板类型选择不同的Prompt
+            // v7.0: 根据模板类型选择不同的Prompt
             let templatePrompt = '';
             
             if (templateType === '观察式') {
                 templatePrompt = mode === 'long' 
-                    ? `【观察式-深度版】以观察者视角，先提出现象（60字），再分析3个深层原因[一R][二R][三R]，每点150字，共600-650字。`
-                    : `【观察式-标准版】观察现象（20字）+ 3个要点[一R][二R][三R]，每点60字，共280-320字。`;
+                    ? `【观察式-深度】结构：场景化开头（120字）+ 个人经历（80字）+ 3个观察分析[一R][二R][三R]（每个包含：为什么40字+具体做法含话术80字+例子30字）。总字数950-1050字。`
+                    : `【观察式-标准】结构：场景化开头（100字，3个具体场景）+ 个人经历（80字）+ 3个观察要点[一R][二R][三R]（每个包含：为什么30字+具体做法含话术60字+例子25字）。总字数750-850字。`;
             } else if (templateType === '故事式') {
                 templatePrompt = mode === 'long'
-                    ? `【故事式-深度版】讲述一个成年人社交故事（80字），再分3个阶段/转折点[一R][二R][三R]，每点140字，共600-650字。`
-                    : `【故事式-标准版】简短故事引入（30字）+ 3个关键点[一R][二R][三R]，每点60字，共280-320字。`;
+                    ? `【故事式-深度】结构：场景化开头（120字）+ 个人故事（100字）+ 3个转折/阶段[一R][二R][三R]（每个包含：背景40字+具体做法含话术80字+结果30字）。总字数950-1050字。`
+                    : `【故事式-标准】结构：场景化开头（100字，3个具体场景）+ 个人故事（80字）+ 3个关键点[一R][二R][三R]（每个包含：背景30字+具体做法含话术60字+结果25字）。总字数750-850字。`;
             } else {
                 templatePrompt = mode === 'long'
-                    ? `【方法式-深度版】直接给出解决方案，3个方法[一R][二R][三R]，每个方法包含原理+步骤，每点180字，共600-650字。`
-                    : `【方法式-标准版】3个简洁方法[一R][二R][三R]，每个方法70字含步骤，共280-320字。`;
+                    ? `【方法式-深度】结构：场景化开头（120字）+ 为什么需要（80字）+ 3个方法[一R][二R][三R]（每个包含：原理40字+步骤含具体话术80字+效果30字）。总字数950-1050字。`
+                    : `【方法式-标准】结构：场景化开头（100字，3个具体场景，如："是不是经常这样：•场景1•场景2•场景3"）+ 为什么需要（80字，如"我也是从XX过来的..."）+ 3个方法[一R][二R][三R]（每个包含：原理30字+步骤含具体话术如"错误示范：XX 正确话术：XX"60字+效果25字）。总字数750-850字。`;
             }
 
             const finalPrompt = `你是一位职场社交导师。请为标题《${row['标题']}》写一篇干货正文（不要结尾）。
 ${ADULT_CONSTRAINT}
 ${templatePrompt}
-【禁令】禁止英文、敏感词、不要写结尾。`;
 
-            const maxTokens = (mode === 'long') ? 1200 : 600;
+【关键要求】
+1. 场景化开头必须写3个具体场景，用"是不是经常这样："开头
+2. 个人经历必须包含"我也是从XX过来的"这种表述
+3. 每个要点必须包含具体话术，格式如：错误示范："XX" 正确话术："XX"
+4. 禁止英文、敏感词、不要写结尾标题。`;
+
+            const maxTokens = (mode === 'long') ? 2000 : 1500;
 
             const userKey = localStorage.getItem('user_api_key');
             const response = await fetch(CONFIG.API_BASE_URL, {
@@ -325,9 +448,8 @@ ${templatePrompt}
                 full = full.replace(new RegExp(key, 'g'), val);
             }
             
-            // ✅ 修复2：使用特殊标记符作为空行占位符
-            // Excel会识别这个符号，复制到小红书后也会保留空行
-            full = full.replace(/\n\n/g, '\n⠀\n'); // ⠀ 是盲文空格 (U+2800)
+            // v7.0: 使用盲文空格作为空行占位符
+            full = full.replace(/\n\n/g, '\n⠀\n');
             
             // 生成标签
             let tags = ['#普通人社会化指南', '#人情世故'];
@@ -335,15 +457,25 @@ ${templatePrompt}
             tags.push(...randomPickMultiple(CONFIG.KEYWORDS.social, 3).map(t=>'#'+t));
             tags.push(...randomPickMultiple(CONFIG.KEYWORDS.growth, 2).map(t=>'#'+t));
             
+            // v7.0: 生成封面文字
+            let coverText = generateCoverText(row['标题']);
+            
+            // 确保标题≤20字
+            let finalTitle = row['标题'];
+            if (finalTitle.length > 20) {
+                finalTitle = finalTitle.substring(0, 20);
+            }
+            
             return { 
-                title: row['标题'], 
-                templateType: templateType,  // ← 返回模板类型
+                title: finalTitle,
+                coverText: coverText,
+                templateType: templateType,
                 body: full, 
                 tags: tags.slice(0,10).join(' ') 
             };
         }
 
-        // 历史记录管理
+        // ========== 流程控制 & 历史记录 ==========
         let excelData = null;
         let isPaused = false;
         let pauseRequested = false;
@@ -424,25 +556,27 @@ ${templatePrompt}
                 const row = excelData[i];
                 if (!row['标题']) continue;
 
-                log.innerHTML += `<div class="log-item">[${i+1}/${total}] 模板：${row['模板类型'] || '观察式'} | 标题：${row['标题']}...</div>`;
+                log.innerHTML += `<div class="log-item">[${i+1}/${total}] ${row['模板类型'] || '观察式'} | ${row['标题']}...</div>`;
                 log.scrollTop = log.scrollHeight;
 
                 try {
                     let res = await generateSocial(row);
                     const newRow = {
-                        '序号': i+1, 
-                        '模板类型': res.templateType,  // ← 保存模板类型
-                        '原标题': row['标题'],
+                        '序号': i+1,
+                        '标题': res.title,
+                        '封面文字': res.coverText,  // v7.0新增
+                        '模板类型': res.templateType,
                         '生成文案': res.body, 
                         '话题': res.tags, 
-                        '字数': res.body.replace(/⠀/g, '').length  // 计算真实字数（不含空格符）
+                        '字数': res.body.replace(/⠀/g, '').length
                     };
                     currentResults.push(newRow);
                     
                     saveToHistory(currentResults);
 
-                    log.innerHTML += `<div class="log-item" style="color: green; font-weight: bold;">✅ 成功 (${newRow['字数']}字) - 已备份</div>`;
+                    log.innerHTML += `<div class="log-item" style="color: green; font-weight: bold;">✅ 成功 (${newRow['字数']}字) | 封面: ${res.coverText}</div>`;
                     document.getElementById('progressFill').style.width = ((i+1)/total*100) + '%';
+                    document.getElementById('progressFill').textContent = Math.round((i+1)/total*100) + '%';
                 } catch (e) {
                     console.error(e);
                     log.innerHTML += `<div class="log-item" style="color:red; font-weight:bold;">❌ 失败: ${e.message}</div>`;
@@ -470,7 +604,7 @@ ${templatePrompt}
             }
         }
 
-        // 激活码逻辑
+        // ========== 激活码逻辑 ==========
         function generateActivationCode(businessType, expireDate) {
             const dateStr = expireDate.replace(/-/g, '');
             const random = Math.random().toString(36).substring(2, 6).toUpperCase();
@@ -524,7 +658,7 @@ ${templatePrompt}
         function showAdminModal() { document.getElementById('adminModal').classList.add('show'); }
         function closeAdminModal() { document.getElementById('adminModal').classList.remove('show'); }
         function showStatus(id, msg, type) { 
-            const el = document.getElementById(id); 
+            const el = typeof id === 'string' ? document.getElementById(id) : id;
             el.textContent = msg; 
             el.className = `status ${type}`; 
             el.classList.remove('hidden'); 
