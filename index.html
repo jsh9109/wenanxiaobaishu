@@ -3,30 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEO内容矩阵生成系统 - v6.2 最终洁癖版</title>
+    <title>SEO内容矩阵生成系统 - v6.4 智能精简版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        /* v6.2 风格 - 完美元气橙 */
+        /* v6.4 风格 - 精准黑金 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fff7e6; min-height: 100vh; padding: 20px; }
-        .container { max-width: 950px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; }
-        .header { background: #fa8c16; color: white; padding: 25px; text-align: center; position: relative; }
-        .header h1 { font-size: 24px; margin-bottom: 5px; font-weight: 600; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfdfd; min-height: 100vh; padding: 20px; }
+        .container { max-width: 950px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #eee; }
+        .header { background: #262626; color: #ffd591; padding: 25px; text-align: center; position: relative; }
+        .header h1 { font-size: 24px; margin-bottom: 5px; font-weight: 600; letter-spacing: 1px; }
+        .header p { opacity: 0.8; font-size: 13px; color: #fff; }
         
         .top-bar { margin-top: 15px; display: flex; justify-content: center; gap: 15px; }
-        .history-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); color: white; padding: 6px 15px; border-radius: 20px; cursor: pointer; font-size: 13px; transition: 0.3s; }
-        .history-btn:hover { background: rgba(255,255,255,0.3); }
+        .history-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #ffd591; padding: 6px 15px; border-radius: 20px; cursor: pointer; font-size: 13px; transition: 0.3s; }
+        .history-btn:hover { background: rgba(255,255,255,0.2); }
 
         .content { padding: 30px; }
-        .section { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; border: 1px solid #ffd591; border-left: 5px solid #fa8c16; }
+        .section { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; border: 1px solid #f0f0f0; border-left: 5px solid #262626; }
         .section-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: #333; }
-        .info-box { background: #fff7e6; border: 1px solid #ffbb96; color: #d4380d; padding: 12px; border-radius: 6px; font-size: 13px; margin-bottom: 15px; }
+        .info-box { background: #fafafa; border: 1px solid #d9d9d9; color: #595959; padding: 12px; border-radius: 6px; font-size: 13px; margin-bottom: 15px; }
         
         .btn { padding: 10px 25px; border: none; border-radius: 6px; cursor: pointer; color: white; font-weight: 600; margin-right: 10px; transition: 0.2s; }
-        .btn-orange { background: #fa8c16; }
+        .btn-black { background: #262626; }
         .btn-blue { background: #1890ff; }
         .btn-green { background: #52c41a; }
-        .log { margin-top: 15px; padding: 15px; background: #1f1f1f; color: #fa8c16; border-radius: 6px; max-height: 300px; overflow-y: auto; font-family: "Menlo", monospace; font-size: 12px; border: 1px solid #333; }
+        .log { margin-top: 15px; padding: 15px; background: #1f1f1f; color: #ffd591; border-radius: 6px; max-height: 300px; overflow-y: auto; font-family: "Menlo", monospace; font-size: 12px; }
         .hidden { display: none !important; }
         input, select { width: 100%; padding: 12px; border: 1px solid #d9d9d9; border-radius: 6px; }
         .input-group { display: flex; gap: 10px; }
@@ -41,8 +42,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>💍 戒指SEO内容工厂 v6.2 (最终洁癖版)</h1>
-            <p>去引号 | 去格式 | 去重复 | 纯净输出</p>
+            <h1>💍 戒指SEO内容工厂 v6.4 (智能精简版)</h1>
+            <p>只写短标题 | 拒绝半截话 | 100%完整表达</p>
             <div class="top-bar">
                 <button class="history-btn" onclick="showHistoryModal()">📜 历史记录</button>
             </div>
@@ -52,12 +53,12 @@
             <div class="section">
                 <div class="section-title">📥 步骤 0：模板准备</div>
                 <div class="info-box">
-                    ✨ <b>最后一次检查：</b><br>
-                    逻辑未变，仅增强了<b>"去符号"</b>功能。<br>
-                    生成的标题将自动删除 " " 和 “ ” 等多余符号。<br>
+                    ✂️ <b>逻辑升级：</b><br>
+                    已将AI的标题字数红线设为 <b>16-18字</b>。<br>
+                    如果AI不小心超标，系统会优先<b>剔除Emoji</b>来保全文案，绝不暴力截断文字。<br>
                     (继续使用 v5.4 标准模板即可)
                 </div>
-                <button class="btn btn-orange" onclick="downloadSmartTemplate()">📥 下载标准模板_v5.4.xlsx</button>
+                <button class="btn btn-black" onclick="downloadSmartTemplate()">📥 下载标准模板_v5.4.xlsx</button>
             </div>
 
             <div class="section">
@@ -72,7 +73,7 @@
             <div class="section">
                 <div class="section-title">📂 步骤 2：上传您的表格</div>
                 <input type="file" id="systemFile" accept=".xlsx,.xls" onchange="handleSystemFile()">
-                <div id="fileStatus" class="hidden" style="margin-top:10px; color:#fa8c16; font-weight:bold;"></div>
+                <div id="fileStatus" class="hidden" style="margin-top:10px; color:#262626; font-weight:bold;"></div>
             </div>
 
             <div class="section hidden" id="configSection">
@@ -83,7 +84,7 @@
                 </div>
                 
                 <div class="btn-group">
-                    <button class="btn btn-orange" id="startBtn" onclick="startGeneration()">🚀 开始生产</button>
+                    <button class="btn btn-black" id="startBtn" onclick="startGeneration()">🚀 开始生产</button>
                     <button class="btn btn-blue hidden" id="pauseBtn" onclick="togglePause()">⏸️ 暂停</button>
                     <button class="btn btn-green hidden" id="downloadBtn" onclick="downloadResult()">📥 导出结果</button>
                 </div>
@@ -97,7 +98,7 @@
         <div class="modal-content">
             <h3 style="margin-top:0; border-bottom:1px solid #eee; padding-bottom:10px;">💾 历史记录</h3>
             <ul class="history-list" id="historyListUi"></ul>
-            <button class="btn btn-orange" onclick="document.getElementById('historyModal').style.display='none'" style="width:100%; margin-top:15px;">关闭</button>
+            <button class="btn btn-black" onclick="document.getElementById('historyModal').style.display='none'" style="width:100%; margin-top:15px;">关闭</button>
         </div>
     </div>
 
@@ -137,7 +138,7 @@
             history.forEach((rec) => {
                 const li = document.createElement('li');
                 li.className = 'history-item';
-                li.innerHTML = `<div><b>${rec.time}</b> <br><span style="font-size:12px;color:#666;">共 ${rec.count} 条</span></div> <span style="color:#fa8c16;font-weight:bold;">下载</span>`;
+                li.innerHTML = `<div><b>${rec.time}</b> <br><span style="font-size:12px;color:#666;">共 ${rec.count} 条</span></div> <span style="color:#262626;font-weight:bold;">下载</span>`;
                 li.onclick = () => { exportExcel(rec.data, `历史恢复_${rec.id}.xlsx`); document.getElementById('historyModal').style.display = 'none'; };
                 ui.appendChild(li);
             });
@@ -156,7 +157,7 @@
             const wsKw = XLSX.utils.aoa_to_sheet([["关键词", "优先级", "价格", "材质", "备注"], ["水波纹戒指", "⭐⭐⭐", "13.9", "银色质感", "示例"]]);
             XLSX.utils.book_append_sheet(wb, wsKw, SHEET_NAMES.keywords);
             
-            const promptsData = [["指令名称", "指令内容"], ["指令1：爆款修正模式", `【角色设定】\n激动得语无伦次的女生。\n【核心关键词】{从SEO关键词库选择}\n【标题要求】请模仿我提供的【参考标题】句式！\n【正文要求】每一句话都要换行！不要用逗号。必须包含场景、痛点、细节、逼单。\n请输出：\n标题\n正文`]];
+            const promptsData = [["指令名称", "指令内容"], ["指令1：爆款修正模式", `【角色设定】\n激动得语无伦次的女生。\n【核心关键词】{从SEO关键词库选择}\n【标题要求】请模仿我提供的【参考标题】句式！字数必须在16字左右！太长就换一种短的说法，不要只写一半！\n【正文要求】每一句话都要换行！不要用逗号。必须包含场景、痛点、细节、逼单。\n请输出：\n标题\n正文`]];
             const wsPrompt = XLSX.utils.aoa_to_sheet(promptsData);
             XLSX.utils.book_append_sheet(wb, wsPrompt, SHEET_NAMES.prompts);
 
@@ -276,10 +277,10 @@
                 }
                 
                 finalPrompt = finalPrompt.replace(/示例：[\s\S]*?(?=\n\n|\n【)/, ""); 
-                finalPrompt += `\n\n【⚠️本次任务】\n请务必模仿下面这个参考标题的【句式】和【语气】来写标题，不要直接抄：\n参考标题："${randomRefTitle}"`;
-                finalPrompt += `\n\n【红线】\n1. 价格必须写：${price}！\n2. 关键词：${kw}！\n3. 不要Markdown，标题不要带引号。`;
+                finalPrompt += `\n\n【⚠️核心要求】\n1. 仿写：请模仿下面参考标题的【句式】和【语气】（如对话体、震惊体），但内容要完全适配我的产品。\n参考标题："${randomRefTitle}"\n2. 字数：标题必须极其精简！目标16字，上限18字。如果想说的话太长，请直接换一种短的说法，严禁写一半被截断！`;
+                finalPrompt += `\n\n【红线】\n1. 价格锁死：${price}\n2. 关键词：${kw}\n3. 不要引号，不要前缀。`;
 
-                log.innerHTML += `<div>[${i+1}/${tasks.length}] 正在生成... <br><span style="color:#888;">仿写目标: ${randomRefTitle.substring(0, 10)}...</span></div>`;
+                log.innerHTML += `<div>[${i+1}/${tasks.length}] 正在生成... <br><span style="color:#888;">仿写: ${randomRefTitle.substring(0, 10)}...</span></div>`;
                 log.scrollTop = log.scrollHeight;
 
                 try {
@@ -292,12 +293,11 @@
                     if (json.error) throw new Error(json.error.message);
                     const content = json.choices[0].message.content;
                     
-                    // 🔴🔴🔴 v6.2 洁癖清洗逻辑 🔴🔴🔴
                     const cleanStr = (str) => {
                         return str.replace(/\*\*/g, '')
                                   .replace(/###/g, '')
                                   .replace(/【|】/g, '')
-                                  .replace(/["“”]/g, '') // 🔥 去除所有引号
+                                  .replace(/["“”]/g, '') 
                                   .trim();
                     };
 
@@ -309,7 +309,20 @@
                         let candidate = cleanStr(lines[0]);
                         candidate = candidate.replace(/^(标题|Title)[:：]?\s*/i, '');
                         if (candidate === "标题" || candidate === "Title") { lines.shift(); if (lines.length > 0) { candidate = cleanStr(lines[0]); lines.shift(); } } else { lines.shift(); }
-                        if(candidate.length > 25) candidate = candidate.substring(0, 25); 
+                        
+                        // 🔥 智能精简逻辑 (非暴力截断)
+                        // 如果 AI 还是写超了 (比如 22 字)，我们优先去掉 Emoji，这样既不影响句意，又能达标。
+                        // 只有把 Emoji 删光了还超标，才不得不截断 (但有了上面的指令，这种情况几乎不会发生)
+                        if (candidate.length > 20) {
+                            // 1. 尝试去除 Emoji
+                            let noEmoji = candidate.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}]/gu, "");
+                            if (noEmoji.length <= 20) {
+                                candidate = noEmoji; // 成功瘦身
+                            } else {
+                                // 2. 实在没办法才截断 (兜底)
+                                candidate = candidate.substring(0, 20); 
+                            }
+                        }
                         title = candidate;
                         
                         let rawBody = lines.join('\n'); 
