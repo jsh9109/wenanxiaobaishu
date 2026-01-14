@@ -3,48 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEO内容矩阵生成系统 - v5.8 变量锁死版</title>
+    <title>SEO内容矩阵生成系统 - v6.1 最终交付版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        /* v5.8 风格 - 安全绿 */
+        /* v6.1 风格 - 皇家蓝 - 稳定与专业 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f6ffed; min-height: 100vh; padding: 20px; }
-        .container { max-width: 950px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; }
-        .header { background: #389e0d; color: white; padding: 25px; text-align: center; position: relative; }
-        .header h1 { font-size: 22px; margin-bottom: 5px; font-weight: 500; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; min-height: 100vh; padding: 20px; }
+        .container { max-width: 950px; margin: 0 auto; background: white; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; }
+        .header { background: #003eb3; color: white; padding: 25px; text-align: center; position: relative; }
+        .header h1 { font-size: 24px; margin-bottom: 5px; font-weight: 600; }
+        .header p { opacity: 0.9; font-size: 14px; }
         
         .top-bar { margin-top: 15px; display: flex; justify-content: center; gap: 15px; }
-        .history-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 6px 15px; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.3s; }
+        .history-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); color: white; padding: 6px 15px; border-radius: 20px; cursor: pointer; font-size: 13px; transition: 0.3s; }
         .history-btn:hover { background: rgba(255,255,255,0.3); }
 
         .content { padding: 30px; }
-        .section { background: #fff; border-radius: 6px; padding: 20px; margin-bottom: 20px; border: 1px solid #d9f7be; border-left: 4px solid #389e0d; }
-        .section-title { font-size: 15px; font-weight: bold; margin-bottom: 15px; color: #333; }
-        .info-box { background: #f6ffed; border: 1px solid #b7eb8f; color: #389e0d; padding: 12px; border-radius: 4px; font-size: 13px; margin-bottom: 15px; }
+        .section { background: #fff; border-radius: 8px; padding: 20px; margin-bottom: 20px; border: 1px solid #d6e4ff; border-left: 5px solid #003eb3; }
+        .section-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: #333; }
+        .info-box { background: #f0f5ff; border: 1px solid #adc6ff; color: #003eb3; padding: 12px; border-radius: 6px; font-size: 13px; margin-bottom: 15px; }
         
-        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: 500; margin-right: 10px; transition: 0.2s; }
+        .btn { padding: 10px 25px; border: none; border-radius: 6px; cursor: pointer; color: white; font-weight: 600; margin-right: 10px; transition: 0.2s; }
+        .btn-blue { background: #003eb3; }
         .btn-green { background: #389e0d; }
-        .btn-blue { background: #1890ff; }
-        .btn-orange { background: #fa8c16; }
-        .log { margin-top: 15px; padding: 15px; background: #fafafa; color: #333; border-radius: 4px; max-height: 250px; overflow-y: auto; font-family: monospace; font-size: 12px; border: 1px solid #eee; }
+        .btn-orange { background: #d46b08; }
+        .log { margin-top: 15px; padding: 15px; background: #1f1f1f; color: #00ff00; border-radius: 6px; max-height: 300px; overflow-y: auto; font-family: "Menlo", monospace; font-size: 12px; border: 1px solid #333; }
         .hidden { display: none !important; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #d9d9d9; border-radius: 6px; }
         .input-group { display: flex; gap: 10px; }
         
+        /* 模态框 */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 400px; max-width: 90%; }
+        .modal-content { background: white; padding: 25px; border-radius: 12px; width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         .history-list { list-style: none; padding: 0; }
-        .history-item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; justify-content: space-between; }
+        .history-item { padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .history-item:hover { background: #f5f5f5; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>💍 戒指SEO内容工厂 v5.8 (变量锁死版)</h1>
-            <p>价格绝对准确 | 关键词强制植入 | 标题自动修复</p>
+            <h1>💍 戒指SEO内容工厂 v6.1 (最终版)</h1>
+            <p>100%调用您的Excel爆款库 | 拒绝重复 | 格式完美</p>
             <div class="top-bar">
-                <button class="history-btn" onclick="showHistoryModal()">📜 历史记录</button>
+                <button class="history-btn" onclick="showHistoryModal()">📜 查看历史记录</button>
             </div>
         </div>
         
@@ -52,40 +54,40 @@
             <div class="section">
                 <div class="section-title">📥 步骤 0：模板准备</div>
                 <div class="info-box">
-                    🔒 <b>安全升级：</b><br>
-                    此版本会在后台强制锁定 <b>{价格}</b> 和 <b>{关键词}</b>。<br>
-                    无论AI怎么"发疯"，它都必须老老实实把您表格里的价格填进去，绝不会再乱跳了。<br>
-                    (继续使用 v5.4 或任何旧模板均可)
+                    📊 <b>逻辑确认：</b><br>
+                    系统将读取您表格中的 <b>[🔥爆款标题库]</b>。<br>
+                    生成每一条文案时，都会<b>随机抽取</b>一个标题让AI进行深度仿写。<br>
+                    (请确保您的 Excel 里有这个表，内容越多越好！)
                 </div>
-                <button class="btn btn-green" onclick="downloadSmartTemplate()">📥 下载模板_v5.4.xlsx</button>
+                <button class="btn btn-blue" onclick="downloadSmartTemplate()">📥 下载标准模板_v5.4.xlsx</button>
             </div>
 
             <div class="section">
                 <div class="section-title">🔌 步骤 1：配置 API</div>
                 <div class="input-group">
                     <input type="password" id="apiKey" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx" style="flex:1;">
-                    <button class="btn btn-blue" onclick="saveApiKey()" style="margin-right:0;">💾 保存 Key</button>
+                    <button class="btn btn-green" onclick="saveApiKey()" style="margin-right:0;">💾 保存 Key</button>
                 </div>
                 <div id="keyStatus" style="font-size:12px; color:green; margin-top:5px; height:18px;"></div>
             </div>
 
             <div class="section">
-                <div class="section-title">📂 步骤 2：上传表格</div>
+                <div class="section-title">📂 步骤 2：上传您的表格</div>
                 <input type="file" id="systemFile" accept=".xlsx,.xls" onchange="handleSystemFile()">
-                <div id="fileStatus" class="hidden" style="margin-top:10px; color:#389e0d; font-weight:bold;"></div>
+                <div id="fileStatus" class="hidden" style="margin-top:10px; color:#003eb3; font-weight:bold;"></div>
             </div>
 
             <div class="section hidden" id="configSection">
-                <div class="section-title">⚙️ 步骤 3：执行</div>
+                <div class="section-title">⚙️ 步骤 3：执行生产</div>
                 <div style="margin-bottom:15px;">
-                    <label style="display:block; margin-bottom:5px; font-size:12px; color:#666;">请选择指令：</label>
+                    <label style="display:block; margin-bottom:5px; font-size:12px; color:#666;">请选择指令（建议使用修正爆款模式）：</label>
                     <select id="promptTemplate"><option value="">-- 请选择 --</option></select>
                 </div>
                 
                 <div class="btn-group">
-                    <button class="btn btn-green" id="startBtn" onclick="startGeneration()">🚀 开始生产 (锁死模式)</button>
+                    <button class="btn btn-blue" id="startBtn" onclick="startGeneration()">🚀 开始生产</button>
                     <button class="btn btn-orange hidden" id="pauseBtn" onclick="togglePause()">⏸️ 暂停</button>
-                    <button class="btn btn-blue hidden" id="downloadBtn" onclick="downloadResult()">📥 导出结果</button>
+                    <button class="btn btn-green hidden" id="downloadBtn" onclick="downloadResult()">📥 导出结果</button>
                 </div>
                 
                 <div class="log" id="log"></div>
@@ -95,9 +97,9 @@
 
     <div id="historyModal" class="modal">
         <div class="modal-content">
-            <h3 style="margin-top:0;">💾 历史记录</h3>
+            <h3 style="margin-top:0; border-bottom:1px solid #eee; padding-bottom:10px;">💾 最近 5 次记录</h3>
             <ul class="history-list" id="historyListUi"></ul>
-            <button class="btn btn-blue" onclick="document.getElementById('historyModal').style.display='none'" style="width:100%; margin-top:10px;">关闭</button>
+            <button class="btn btn-blue" onclick="document.getElementById('historyModal').style.display='none'" style="width:100%; margin-top:15px;">关闭</button>
         </div>
     </div>
 
@@ -106,11 +108,12 @@
         let GLOBAL_DATA = { keywords: [], prompts: [], tags: [], titles: [], generated: [] };
         let isPaused = false;
 
+        // --- 1. Key 记忆功能 ---
         window.onload = function() {
             const savedKey = localStorage.getItem('xhs_user_api_key');
             if (savedKey) {
                 document.getElementById('apiKey').value = savedKey;
-                document.getElementById('keyStatus').textContent = "✅ Key 已加载";
+                document.getElementById('keyStatus').textContent = "✅ Key 已自动加载";
             }
         };
         function saveApiKey() {
@@ -120,24 +123,25 @@
             document.getElementById('keyStatus').textContent = "✅ Key 已保存";
         }
 
+        // --- 2. 历史记录功能 ---
         function saveToHistoryList(data) {
             if (!data || data.length === 0) return;
-            let history = JSON.parse(localStorage.getItem('xhs_history_list_v5') || "[]");
+            let history = JSON.parse(localStorage.getItem('xhs_history_list_v6') || "[]");
             const record = { id: new Date().getTime(), time: new Date().toLocaleString(), count: data.length, data: data };
             history.unshift(record);
             if (history.length > 5) history = history.slice(0, 5);
-            localStorage.setItem('xhs_history_list_v5', JSON.stringify(history));
+            localStorage.setItem('xhs_history_list_v6', JSON.stringify(history));
         }
 
         function showHistoryModal() {
-            const history = JSON.parse(localStorage.getItem('xhs_history_list_v5') || "[]");
+            const history = JSON.parse(localStorage.getItem('xhs_history_list_v6') || "[]");
             const ui = document.getElementById('historyListUi');
             ui.innerHTML = "";
-            if(history.length === 0) ui.innerHTML = "<li style='color:#999;text-align:center;'>暂无记录</li>";
+            if(history.length === 0) ui.innerHTML = "<li style='color:#999;text-align:center;padding:20px;'>暂无记录</li>";
             history.forEach((rec) => {
                 const li = document.createElement('li');
                 li.className = 'history-item';
-                li.innerHTML = `<div>${rec.time} <small>(${rec.count}条)</small></div> <span style="color:#1890ff;">下载</span>`;
+                li.innerHTML = `<div><b>${rec.time}</b> <br><span style="font-size:12px;color:#666;">共 ${rec.count} 条</span></div> <span style="color:#003eb3;font-weight:bold;">下载</span>`;
                 li.onclick = () => { exportExcel(rec.data, `历史恢复_${rec.id}.xlsx`); document.getElementById('historyModal').style.display = 'none'; };
                 ui.appendChild(li);
             });
@@ -151,22 +155,27 @@
             XLSX.writeFile(wb, filename);
         }
 
+        // --- 3. 模板下载 (含修正指令) ---
         function downloadSmartTemplate() {
             const wb = XLSX.utils.book_new();
             const wsKw = XLSX.utils.aoa_to_sheet([["关键词", "优先级", "价格", "材质", "备注"], ["水波纹戒指", "⭐⭐⭐", "13.9", "银色质感", "示例"]]);
             XLSX.utils.book_append_sheet(wb, wsKw, SHEET_NAMES.keywords);
             
-            const promptsData = [["指令名称", "指令内容"], ["指令1：爆款修正模式", `【角色设定】\n激动得语无伦次的女生。\n【核心关键词】{从SEO关键词库选择}\n【标题要求】对话体+场景+数字！\n【正文要求】每一句话都要换行！不要用逗号。必须包含场景、痛点、细节、逼单。\n请输出：\n标题\n正文`]];
+            const promptsData = [["指令名称", "指令内容"], ["指令1：爆款修正模式", `【角色设定】\n激动得语无伦次的女生。\n【核心关键词】{从SEO关键词库选择}\n【标题要求】请模仿我提供的【参考标题】句式！\n【正文要求】每一句话都要换行！不要用逗号。必须包含场景、痛点、细节、逼单。\n请输出：\n标题\n正文`]];
             const wsPrompt = XLSX.utils.aoa_to_sheet(promptsData);
             XLSX.utils.book_append_sheet(wb, wsPrompt, SHEET_NAMES.prompts);
 
             const wsTags = XLSX.utils.aoa_to_sheet([["标签内容", "标签类型"], ["#戒指", "固定核心标签"]]);
             XLSX.utils.book_append_sheet(wb, wsTags, SHEET_NAMES.tags);
-            const wsTitles = XLSX.utils.aoa_to_sheet([["爆款标题内容"], ["救命🆘13.9的戒指还要什么自行车？！"]]);
+            
+            // 预置一些标题防空
+            const wsTitles = XLSX.utils.aoa_to_sheet([["爆款标题内容"], ["同事：你这戒指大牌吧？我：13.9！"], ["救命🆘闺蜜非抢我手上的戒指！"], ["又是被陌生人夸戒指好看的一天😭"], ["被男友夸了！说这银色质感绝了"]]);
             XLSX.utils.book_append_sheet(wb, wsTitles, SHEET_NAMES.titles);
+            
             XLSX.writeFile(wb, "标准填空模板_v5.4.xlsx");
         }
 
+        // --- 4. 文件读取 (核心：读取 Titles) ---
         function handleSystemFile() {
             const file = document.getElementById('systemFile').files[0];
             if (!file) return;
@@ -175,49 +184,54 @@
                 try {
                     const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
                     const findSheet = (name) => workbook.SheetNames.find(n => n.includes(name.replace(/[^a-zA-Z\u4e00-\u9fa5]/g, "")));
+                    
                     let s1 = workbook.Sheets[SHEET_NAMES.keywords] || workbook.Sheets[findSheet("SEO关键词库")];
                     let s2 = workbook.Sheets[SHEET_NAMES.prompts] || workbook.Sheets[findSheet("AI生成指令")];
                     let s3 = workbook.Sheets[SHEET_NAMES.tags] || workbook.Sheets[findSheet("话题标签SEO库")];
+                    // 🔥 读取爆款库
                     let s4 = workbook.Sheets[SHEET_NAMES.titles] || workbook.Sheets[findSheet("爆款标题库")];
 
                     if(s1) GLOBAL_DATA.keywords = XLSX.utils.sheet_to_json(s1);
                     if(s2) GLOBAL_DATA.prompts = XLSX.utils.sheet_to_json(s2);
                     if(s3) GLOBAL_DATA.tags = XLSX.utils.sheet_to_json(s3);
-                    if(s4) GLOBAL_DATA.titles = XLSX.utils.sheet_to_json(s4).map(r => Object.values(r)[0]);
+                    
+                    if(s4) {
+                        const raw = XLSX.utils.sheet_to_json(s4, {header: 1}); 
+                        GLOBAL_DATA.titles = raw.flat().filter(t => t && t !== "爆款标题内容" && t.toString().length > 4);
+                    } else {
+                        GLOBAL_DATA.titles = [];
+                    }
 
-                    if (!s1 || !s2) return alert("❌ 表格不完整");
-                    document.getElementById('fileStatus').innerHTML = `✅ 加载成功`;
+                    if (!s1 || !s2) return alert("❌ 表格缺少必要的Sheet，请检查！");
+                    
+                    document.getElementById('fileStatus').innerHTML = `✅ 产品: ${GLOBAL_DATA.keywords.length}个 | 🔥 爆款库: ${GLOBAL_DATA.titles.length}条 (将随机调用)`;
                     document.getElementById('fileStatus').classList.remove('hidden');
+                    
                     const select = document.getElementById('promptTemplate');
                     select.innerHTML = '<option value="">-- 请选择 --</option>';
                     GLOBAL_DATA.prompts.forEach((row, i) => { if(row['指令名称']) select.innerHTML += `<option value="${i}">${row['指令名称']}</option>`; });
                     document.getElementById('configSection').classList.remove('hidden');
-                } catch (err) { alert("文件读取失败"); }
+                } catch (err) { alert("文件读取失败: " + err.message); }
             };
             reader.readAsArrayBuffer(file);
         }
 
         function getTags() {
-            if(!GLOBAL_DATA.tags.length) return "#推荐";
+            if(!GLOBAL_DATA.tags || !GLOBAL_DATA.tags.length) return "#推荐";
             const fixed = GLOBAL_DATA.tags.filter(t => t['标签类型'] && t['标签类型'].includes('固定')).map(t=>t['标签内容']);
             const others = GLOBAL_DATA.tags.filter(t => !t['标签类型'] || !t['标签类型'].includes('固定')).map(t=>t['标签内容']);
             return [...fixed, ...others.sort(() => 0.5 - Math.random()).slice(0, 7)].join(" ");
         }
 
-        function getRandomTitles(count) {
-            if (!GLOBAL_DATA.titles || GLOBAL_DATA.titles.length === 0) return "";
-            const shuffled = [...GLOBAL_DATA.titles].sort(() => 0.5 - Math.random());
-            return shuffled.slice(0, count).map((t, i) => `${i+1}. ${t}`).join("\n");
-        }
-
+        // --- 5. 暂停与下载 ---
         function togglePause() {
             if (isPaused) {
                 isPaused = false;
-                document.getElementById('pauseBtn').innerText = "⏸️ 暂停 (可导出)";
+                document.getElementById('pauseBtn').innerText = "⏸️ 暂停";
                 document.getElementById('pauseBtn').className = "btn btn-orange";
             } else {
                 isPaused = true;
-                document.getElementById('pauseBtn').innerText = "▶️ 已暂停 (点击继续)";
+                document.getElementById('pauseBtn').innerText = "▶️ 继续";
                 document.getElementById('pauseBtn').className = "btn btn-green";
                 saveToHistoryList(GLOBAL_DATA.generated);
                 document.getElementById('downloadBtn').classList.remove('hidden');
@@ -232,7 +246,7 @@
             saveToHistoryList(GLOBAL_DATA.generated);
         }
 
-        // --- 核心生成逻辑 (v5.8 变量锁死版) ---
+        // --- 6. 核心生成逻辑 (v6.1) ---
         async function startGeneration() {
             let apiKey = document.getElementById('apiKey').value;
             if (!apiKey) apiKey = localStorage.getItem('xhs_user_api_key');
@@ -248,7 +262,6 @@
             isPaused = false; 
             
             const promptRow = GLOBAL_DATA.prompts[pIdx];
-            // 🔥 读取原始模板
             let originalTemplate = promptRow['指令内容'];
             
             const log = document.getElementById('log');
@@ -263,40 +276,42 @@
                 if(!kw) continue;
 
                 let finalPrompt = originalTemplate;
-                // 1. 变量替换
+                // 变量替换
                 finalPrompt = finalPrompt.replace(/\{从SEO关键词库选择\}/g, kw).replace(/\{关键词\}/g, kw);
                 const price = row['价格'] || "13.9"; 
                 finalPrompt = finalPrompt.replace(/\{价格\}/g, price);
                 const material = row['材质'] || "银色质感";
                 finalPrompt = finalPrompt.replace(/\{材质\}/g, material);
                 
-                // 🔥 2. 注入【数据锁】指令 (不可见，但生效)
-                // 强制要求AI必须包含关键词和特定价格，否则视为失败
-                finalPrompt += `\n\n【⚠️绝对红线 - 违反则死机⚠️】\n1. 核心关键词必须是：【${kw}】。请务必在正文里自然提到它，或者拆分提到。\n2. 产品价格必须写：【${price}】。严禁自己编造其他价格（如9.9, 14.9等），必须严格使用我给的数字！\n3. 材质必须写：【${material}】。`;
-
-                const randomExamples = getRandomTitles(5);
-                if (finalPrompt.includes("{随机爆款标题}")) {
-                    finalPrompt = finalPrompt.replace(/\{随机爆款标题\}/g, randomExamples);
-                } else if (randomExamples) {
-                    finalPrompt += `\n\n【参考爆款标题风格】\n${randomExamples}`;
+                // 🔥 核心逻辑：从 Excel 库中随机抽一个标题
+                let randomRefTitle = "同事：这戒指大牌吧？我：13.9！"; // 默认兜底
+                if (GLOBAL_DATA.titles && GLOBAL_DATA.titles.length > 0) {
+                    const rIdx = Math.floor(Math.random() * GLOBAL_DATA.titles.length);
+                    randomRefTitle = GLOBAL_DATA.titles[rIdx];
                 }
+                
+                // 移除旧示例，注入新要求
+                finalPrompt = finalPrompt.replace(/示例：[\s\S]*?(?=\n\n|\n【)/, ""); 
+                finalPrompt += `\n\n【⚠️本次任务核心要求】\n请务必模仿下面这个参考标题的【句式】、【语气】和【标点使用】，不要直接抄，要仿写！\n参考标题：👉 "${randomRefTitle}"`;
+                
+                // 锁死数据
+                finalPrompt += `\n\n【红线】\n1. 价格必须写：${price}！\n2. 关键词：${kw}！\n3. 不要Markdown，不要写前缀。`;
 
-                log.innerHTML += `<div>[${i+1}/${tasks.length}] 正在生成: <b>${kw}</b> (🔒价格锁定:${price})</div>`;
+                log.innerHTML += `<div>[${i+1}/${tasks.length}] 正在生成... <br><span style="color:#888;">仿写目标: ${randomRefTitle}</span></div>`;
                 log.scrollTop = log.scrollHeight;
 
                 try {
                     const res = await fetch("https://api.gptsapi.net/v1/chat/completions", {
                         method: "POST",
                         headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey },
-                        body: JSON.stringify({ model: "gpt-4o", messages: [{role: "user", content: finalPrompt}], temperature: 0.8 })
+                        body: JSON.stringify({ model: "gpt-4o", messages: [{role: "user", content: finalPrompt}], temperature: 0.9 }) 
                     });
                     const json = await res.json();
                     if (json.error) throw new Error(json.error.message);
                     const content = json.choices[0].message.content;
                     
-                    // 清洗与提取
+                    // 清洗逻辑
                     const cleanStr = (str) => str.replace(/\*\*/g, '').replace(/###/g, '').replace(/【|】/g, '').trim();
-
                     const lines = content.split('\n').filter(line => line.trim() !== '');
                     let title = "";
                     let body = "";
@@ -304,13 +319,7 @@
                     if(lines.length > 0) {
                         let candidate = cleanStr(lines[0]);
                         candidate = candidate.replace(/^(标题|Title)[:：]?\s*/i, '');
-                        if (candidate === "标题" || candidate === "Title") {
-                             lines.shift(); 
-                             if (lines.length > 0) {
-                                candidate = cleanStr(lines[0]);
-                                lines.shift(); 
-                             }
-                        } else { lines.shift(); }
+                        if (candidate === "标题" || candidate === "Title") { lines.shift(); if (lines.length > 0) { candidate = cleanStr(lines[0]); lines.shift(); } } else { lines.shift(); }
                         if(candidate.length > 25) candidate = candidate.substring(0, 25); 
                         title = candidate;
                         
@@ -320,13 +329,7 @@
                         body = body.replace(/^-+/, '').trim();
                         body = body.replace(/#\S+/g, '').split(/话题标签|Tags/i)[0].trim();
                         
-                        if (!title || title.length < 2) {
-                             const bodyParts = body.split('\n');
-                             if (bodyParts.length > 0) {
-                                 title = bodyParts[0]; 
-                                 body = bodyParts.slice(1).join('\n'); 
-                             }
-                        }
+                        if (!title || title.length < 2) { const bodyParts = body.split('\n'); if (bodyParts.length > 0) { title = bodyParts[0]; body = bodyParts.slice(1).join('\n'); } }
                         if (!body.includes('\n')) body = body.replace(/([。！？])/g, "$1\n\n");
                     }
 
