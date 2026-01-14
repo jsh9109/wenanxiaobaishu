@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEO内容矩阵生成系统 - v5.1 指令尊享版</title>
+    <title>SEO内容矩阵生成系统 - v5.2 本地记忆版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        /* v5.1 风格 - 商务简洁 */
+        /* v5.2 风格 - 极简商务 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; min-height: 100vh; padding: 20px; }
         .container { max-width: 950px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; }
@@ -25,16 +25,20 @@
         .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: 500; margin-right: 10px; transition: 0.2s; }
         .btn-blue { background: #1890ff; }
         .btn-green { background: #52c41a; }
+        .btn-gray { background: #8c8c8c; } 
         .log { margin-top: 15px; padding: 15px; background: #fafafa; color: #333; border-radius: 4px; max-height: 250px; overflow-y: auto; font-family: monospace; font-size: 12px; border: 1px solid #eee; }
         .hidden { display: none !important; }
         input, select { width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px; }
+        
+        /* 胶囊按钮组 */
+        .input-group { display: flex; gap: 10px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>💍 戒指SEO内容工厂 v5.1 (指令尊享版)</h1>
-            <p>100% 执行您的 Excel 指令 | 纯净无干扰</p>
+            <h1>💍 戒指SEO内容工厂 v5.2 (本地记忆版)</h1>
+            <p>100% 执行您的 Excel 指令 | 自动记忆 Key</p>
             <div class="top-bar">
                 <button class="history-btn" onclick="recoverBackup()">📂 撤销回退(上一版)</button>
                 <button class="history-btn" onclick="recoverCurrent()">📄 下载当前记录</button>
@@ -47,15 +51,19 @@
                 <div class="info-box">
                     ℹ️ <b>系统逻辑：</b><br>
                     本系统将严格读取您上传表格中的 <b>[🤖AI生成指令]</b>。<br>
-                    如果您需要调整文案风格（如去油、加表情），请直接修改 Excel 表格里的指令内容。<br>
-                    系统仅负责执行和变量替换 ({关键词}, {价格}, {随机爆款标题} 等)。
+                    需要修改文案风格？请直接修改 Excel 指令。<br>
+                    需要参考爆款？请更新 Excel 爆款库。
                 </div>
                 <button class="btn btn-blue" onclick="downloadSmartTemplate()">📥 下载标准模板_v4.0结构.xlsx</button>
             </div>
 
             <div class="section">
-                <div class="section-title">🔌 步骤 1：配置 API</div>
-                <input type="password" id="apiKey" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx">
+                <div class="section-title">🔌 步骤 1：配置 API (已支持记忆)</div>
+                <div class="input-group">
+                    <input type="password" id="apiKey" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx" style="flex:1;">
+                    <button class="btn btn-gray" onclick="saveApiKey()" style="margin-right:0;">💾 保存 Key</button>
+                </div>
+                <div id="keyStatus" style="font-size:12px; color:green; margin-top:5px; height:18px;"></div>
             </div>
 
             <div class="section">
@@ -81,6 +89,23 @@
         const SHEET_NAMES = { keywords: "🔍SEO关键词库", prompts: "🤖AI生成指令", tags: "🏷️话题标签SEO库", titles: "🔥爆款标题库" };
         let GLOBAL_DATA = { keywords: [], prompts: [], tags: [], titles: [], generated: [] };
 
+        // 🟢 核心：Key 记忆功能
+        window.onload = function() {
+            const savedKey = localStorage.getItem('xhs_user_api_key');
+            if (savedKey) {
+                document.getElementById('apiKey').value = savedKey;
+                document.getElementById('keyStatus').textContent = "✅ 已自动加载本地保存的 Key";
+            }
+        };
+
+        function saveApiKey() {
+            const key = document.getElementById('apiKey').value.trim();
+            if (!key) return alert("请先输入 Key");
+            localStorage.setItem('xhs_user_api_key', key);
+            document.getElementById('keyStatus').textContent = "✅ Key 已保存，下次无需输入！";
+            alert("Key 已保存！");
+        }
+
         // --- 历史备份功能 ---
         function backupData() {
             const lastSession = localStorage.getItem('xhs_latest_session');
@@ -103,14 +128,12 @@
             XLSX.writeFile(wb, filename);
         }
 
-        // --- 模板下载 (保持 v4.0 结构，方便用户修改) ---
+        // --- 模板下载 ---
         function downloadSmartTemplate() {
             const wb = XLSX.utils.book_new();
-            // 关键词库
             const wsKw = XLSX.utils.aoa_to_sheet([["关键词", "优先级", "价格", "材质", "备注"], ["水波纹戒指", "⭐⭐⭐", "13.9", "银色质感", "示例"]]);
             XLSX.utils.book_append_sheet(wb, wsKw, SHEET_NAMES.keywords);
             
-            // 指令库 (这里放示例指令，用户可自行修改)
             const promptsData = [
                 ["指令名称", "指令内容"],
                 ["指令1：爆款仿写", `我要在小红书发戒指推广笔记。\n【关键词】{从SEO关键词库选择}\n【参考标题】{随机爆款标题}\n\n【标题要求】\n20字内，模仿参考标题的语气。\n\n【正文要求】\n1. 自然分段\n2. 突出{价格}和{材质}\n3. 口语化，不要AI味\n\n请输出：\n标题\n正文`],
@@ -118,10 +141,8 @@
             const wsPrompt = XLSX.utils.aoa_to_sheet(promptsData);
             XLSX.utils.book_append_sheet(wb, wsPrompt, SHEET_NAMES.prompts);
 
-            // 标签库
             const wsTags = XLSX.utils.aoa_to_sheet([["标签内容", "标签类型"], ["#戒指", "固定核心标签"], ["#戒指推荐", "固定核心标签"]]);
             XLSX.utils.book_append_sheet(wb, wsTags, SHEET_NAMES.tags);
-            // 标题库
             const wsTitles = XLSX.utils.aoa_to_sheet([["爆款标题内容"], ["救命🆘13.9的戒指还要什么自行车？！"]]);
             XLSX.utils.book_append_sheet(wb, wsTitles, SHEET_NAMES.titles);
 
@@ -175,9 +196,12 @@
             return shuffled.slice(0, count).map((t, i) => `${i+1}. ${t}`).join("\n");
         }
 
-        // --- 生成逻辑 (关键：纯净执行) ---
+        // --- 生成逻辑 ---
         async function startGeneration() {
-            const apiKey = document.getElementById('apiKey').value;
+            let apiKey = document.getElementById('apiKey').value;
+            // 自动补救：如果框里没填，尝试去缓存拿
+            if (!apiKey) apiKey = localStorage.getItem('xhs_user_api_key');
+            
             const pIdx = document.getElementById('promptTemplate').value;
             if(!apiKey || pIdx === "") return alert("请配置API和指令");
 
@@ -187,7 +211,6 @@
             document.getElementById('downloadBtn').classList.add('hidden');
             
             const promptRow = GLOBAL_DATA.prompts[pIdx];
-            // 🔥 核心：直接读取 Excel 里的原始内容，不加任何额外的 system prompt
             const originalTemplate = promptRow['指令内容'];
             
             const log = document.getElementById('log');
@@ -228,27 +251,21 @@
                     if (json.error) throw new Error(json.error.message);
                     const content = json.choices[0].message.content;
                     
-                    // 3. 结果解析 (只做最小限度的清洗，保留AI原意)
+                    // 3. 结果解析
                     const lines = content.split('\n').filter(line => line.trim() !== '');
                     let title = "未生成";
                     let body = "";
 
                     if(lines.length > 0) {
                         let candidate = lines[0].replace(/\*\*/g, '').replace(/标题[:：]/g, '').trim();
-                        if(candidate.length > 20) candidate = candidate.substring(0, 20); // 唯一强制：标题截断，防止表格爆掉
+                        if(candidate.length > 20) candidate = candidate.substring(0, 20); 
                         title = candidate;
                         lines.shift();
                         
-                        // 🔥 核心：保留所有换行！
-                        // 即使AI输出的是一大段，如果 Excel 指令没让它分段，那就是一大段
-                        // 但如果AI输出了换行，这里会完美保留
                         let rawBody = lines.join('\n'); 
-                        
-                        // 简单清洗杂质
                         body = rawBody.replace(/正文[:：]/g, '').replace(/#\S+/g, '').trim();
                         body = body.split(/话题标签|Tags/i)[0].trim();
                         
-                        // 智能优化：如果AI真的一行都没换(纯一坨)，我们帮它切一下
                         if (!body.includes('\n')) {
                              body = body.replace(/([。！？])/g, "$1\n\n");
                         }
@@ -272,7 +289,7 @@
             document.getElementById('downloadBtn').classList.remove('hidden');
             document.getElementById('startBtn').disabled = false;
             log.innerHTML += `<div style="color:#0f0">🎉 全部完成！</div>`;
-            exportExcel(GLOBAL_DATA.generated, `最终结果_v5.1.xlsx`);
+            exportExcel(GLOBAL_DATA.generated, `最终结果_v5.2.xlsx`);
         }
     </script>
 </body>
