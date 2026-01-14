@@ -3,141 +3,360 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEO内容矩阵生成系统 - v5.2 本地记忆版</title>
+    <title>SEO内容矩阵生成系统 - v5.3 交互增强版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        /* v5.2 风格 - 极简商务 */
+        /* v5.3 风格 - 现代商务灰蓝 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; min-height: 100vh; padding: 20px; }
-        .container { max-width: 950px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; }
-        .header { background: #1890ff; color: white; padding: 25px; text-align: center; position: relative; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f8; min-height: 100vh; padding: 20px; }
+        .container { max-width: 950px; margin: 0 auto; background: white; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden; }
+        .header { background: #2c3e50; color: white; padding: 25px; text-align: center; position: relative; }
         .header h1 { font-size: 22px; margin-bottom: 5px; font-weight: 500; }
+        .header p { opacity: 0.8; font-size: 13px; }
         
-        .top-bar { margin-top: 15px; display: flex; justify-content: center; gap: 15px; }
-        .history-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 6px 15px; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.3s; }
-        .history-btn:hover { background: rgba(255,255,255,0.3); }
+        .top-btn { position: absolute; top: 25px; right: 20px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 15px; border-radius: 4px; cursor: pointer; font-size: 13px; transition: 0.3s; }
+        .top-btn:hover { background: rgba(255,255,255,0.25); }
 
         .content { padding: 30px; }
-        .section { background: #fff; border-radius: 6px; padding: 20px; margin-bottom: 20px; border: 1px solid #e8e8e8; border-left: 4px solid #1890ff; }
+        .section { background: #fff; border-radius: 6px; padding: 20px; margin-bottom: 20px; border: 1px solid #e1e4e8; border-left: 4px solid #2c3e50; }
         .section-title { font-size: 15px; font-weight: bold; margin-bottom: 15px; color: #333; }
-        .info-box { background: #e6f7ff; border: 1px solid #91d5ff; color: #1890ff; padding: 12px; border-radius: 4px; font-size: 13px; margin-bottom: 15px; }
+        .info-box { background: #e8f4fd; border: 1px solid #d1eafe; color: #0366d6; padding: 12px; border-radius: 4px; font-size: 13px; margin-bottom: 15px; }
         
         .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: 500; margin-right: 10px; transition: 0.2s; }
-        .btn-blue { background: #1890ff; }
-        .btn-green { background: #52c41a; }
-        .btn-gray { background: #8c8c8c; } 
-        .log { margin-top: 15px; padding: 15px; background: #fafafa; color: #333; border-radius: 4px; max-height: 250px; overflow-y: auto; font-family: monospace; font-size: 12px; border: 1px solid #eee; }
+        .btn-blue { background: #2c3e50; }
+        .btn-green { background: #28a745; }
+        .btn-orange { background: #fd7e14; }
+        .btn-disabled { background: #ccc; cursor: not-allowed; }
+
+        .log { margin-top: 15px; padding: 15px; background: #f8f9fa; color: #333; border-radius: 4px; max-height: 250px; overflow-y: auto; font-family: monospace; font-size: 12px; border: 1px solid #eee; }
         .hidden { display: none !important; }
         input, select { width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px; }
         
-        /* 胶囊按钮组 */
-        .input-group { display: flex; gap: 10px; }
+        /* 历史记录模态框 */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 8px; width: 400px; max-width: 90%; }
+        .modal h3 { margin-bottom: 15px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .history-list { list-style: none; padding: 0; }
+        .history-item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .history-item:hover { background: #f8f9fa; }
+        .history-info { font-size: 13px; color: #555; }
+        .history-tag { background: #e1e4e8; color: #333; padding: 2px 6px; border-radius: 10px; font-size: 11px; }
+        .close-btn { float: right; cursor: pointer; font-size: 20px; color: #999; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>💍 戒指SEO内容工厂 v5.2 (本地记忆版)</h1>
-            <p>100% 执行您的 Excel 指令 | 自动记忆 Key</p>
-            <div class="top-bar">
-                <button class="history-btn" onclick="recoverBackup()">📂 撤销回退(上一版)</button>
-                <button class="history-btn" onclick="recoverCurrent()">📄 下载当前记录</button>
-            </div>
+            <button class="top-btn" onclick="showHistoryModal()">📜 历史记录 (最近5条)</button>
+            <h1>💍 戒指SEO内容工厂 v5.3</h1>
+            <p>暂停导出 | 多条历史 | 严格指令</p>
         </div>
         
         <div class="content">
             <div class="section">
                 <div class="section-title">📥 步骤 0：模板准备</div>
                 <div class="info-box">
-                    ℹ️ <b>系统逻辑：</b><br>
-                    本系统将严格读取您上传表格中的 <b>[🤖AI生成指令]</b>。<br>
-                    需要修改文案风格？请直接修改 Excel 指令。<br>
-                    需要参考爆款？请更新 Excel 爆款库。
+                    💡 <b>功能提示：</b><br>
+                    1. <b>暂停可导出</b>：生成一半想停？点击暂停，直接导出当前进度。<br>
+                    2. <b>历史回溯</b>：点击右上角“历史记录”，找回最近 5 次的任务结果。
                 </div>
                 <button class="btn btn-blue" onclick="downloadSmartTemplate()">📥 下载标准模板_v4.0结构.xlsx</button>
             </div>
 
             <div class="section">
-                <div class="section-title">🔌 步骤 1：配置 API (已支持记忆)</div>
-                <div class="input-group">
+                <div class="section-title">🔌 步骤 1：配置 API (自动记忆)</div>
+                <div style="display:flex; gap:10px;">
                     <input type="password" id="apiKey" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx" style="flex:1;">
-                    <button class="btn btn-gray" onclick="saveApiKey()" style="margin-right:0;">💾 保存 Key</button>
+                    <button class="btn btn-green" onclick="saveApiKey()" style="margin-right:0;">💾 保存</button>
                 </div>
-                <div id="keyStatus" style="font-size:12px; color:green; margin-top:5px; height:18px;"></div>
             </div>
 
             <div class="section">
-                <div class="section-title">📂 步骤 2：上传您的表格</div>
+                <div class="section-title">📂 步骤 2：上传表格</div>
                 <input type="file" id="systemFile" accept=".xlsx,.xls" onchange="handleSystemFile()">
-                <div id="fileStatus" class="hidden" style="margin-top:10px; color:#52c41a; font-weight:bold;"></div>
+                <div id="fileStatus" class="hidden" style="margin-top:10px; color:#28a745; font-weight:bold;"></div>
             </div>
 
             <div class="section hidden" id="configSection">
-                <div class="section-title">⚙️ 步骤 3：选择指令并执行</div>
+                <div class="section-title">⚙️ 步骤 3：控制台</div>
                 <div style="margin-bottom:15px;">
-                    <label style="display:block; margin-bottom:5px; font-size:12px; color:#666;">请选择 Excel 中定义的指令：</label>
+                    <label style="font-size:12px; color:#666;">选择指令：</label>
                     <select id="promptTemplate"><option value="">-- 请选择 --</option></select>
                 </div>
-                <button class="btn btn-blue" id="startBtn" onclick="startGeneration()">🚀 严格执行指令</button>
-                <button class="btn btn-green hidden" id="downloadBtn" onclick="downloadResult()">📥 导出结果</button>
+                
+                <div class="btn-group">
+                    <button class="btn btn-blue" id="startBtn" onclick="startGeneration()">🚀 开始生产</button>
+                    <button class="btn btn-orange hidden" id="pauseBtn" onclick="togglePause()">⏸️ 暂停 (可导出)</button>
+                    <button class="btn btn-green hidden" id="downloadBtn" onclick="downloadResult()">📥 导出结果</button>
+                </div>
+                
                 <div class="log" id="log"></div>
             </div>
+        </div>
+    </div>
+
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeHistoryModal()">&times;</span>
+            <h3>💾 最近 5 次生成记录</h3>
+            <ul class="history-list" id="historyListUi">
+                <li style="text-align:center; padding:20px; color:#999;">暂无记录</li>
+            </ul>
         </div>
     </div>
 
     <script>
         const SHEET_NAMES = { keywords: "🔍SEO关键词库", prompts: "🤖AI生成指令", tags: "🏷️话题标签SEO库", titles: "🔥爆款标题库" };
         let GLOBAL_DATA = { keywords: [], prompts: [], tags: [], titles: [], generated: [] };
+        let isPaused = false;
+        let isRunning = false;
 
-        // 🟢 核心：Key 记忆功能
+        // 🟢 1. API Key 记忆
         window.onload = function() {
             const savedKey = localStorage.getItem('xhs_user_api_key');
-            if (savedKey) {
-                document.getElementById('apiKey').value = savedKey;
-                document.getElementById('keyStatus').textContent = "✅ 已自动加载本地保存的 Key";
-            }
+            if (savedKey) document.getElementById('apiKey').value = savedKey;
         };
-
         function saveApiKey() {
             const key = document.getElementById('apiKey').value.trim();
-            if (!key) return alert("请先输入 Key");
+            if (!key) return alert("请输入Key");
             localStorage.setItem('xhs_user_api_key', key);
-            document.getElementById('keyStatus').textContent = "✅ Key 已保存，下次无需输入！";
-            alert("Key 已保存！");
+            alert("✅ Key 已保存");
         }
 
-        // --- 历史备份功能 ---
-        function backupData() {
-            const lastSession = localStorage.getItem('xhs_latest_session');
-            if (lastSession) localStorage.setItem('xhs_backup_session', lastSession);
+        // 🟢 2. 多条历史记录管理 (核心升级)
+        function saveToHistoryList(data) {
+            if (!data || data.length === 0) return;
+            
+            let history = JSON.parse(localStorage.getItem('xhs_history_list') || "[]");
+            
+            // 构建新记录
+            const record = {
+                id: new Date().getTime(),
+                time: new Date().toLocaleString(),
+                count: data.length,
+                data: data
+            };
+            
+            // 插入头部，保留最近5条
+            history.unshift(record);
+            if (history.length > 5) history = history.slice(0, 5);
+            
+            localStorage.setItem('xhs_history_list', JSON.stringify(history));
         }
-        function recoverBackup() {
-            const data = localStorage.getItem('xhs_backup_session');
-            if (!data) return alert("无备份记录");
-            exportExcel(JSON.parse(data), `恢复_备份_${new Date().getTime()}.xlsx`);
+
+        function showHistoryModal() {
+            const history = JSON.parse(localStorage.getItem('xhs_history_list') || "[]");
+            const ui = document.getElementById('historyListUi');
+            ui.innerHTML = "";
+            
+            if (history.length === 0) {
+                ui.innerHTML = '<li style="text-align:center; padding:20px; color:#999;">暂无记录，快去生成吧~</li>';
+            } else {
+                history.forEach((rec, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'history-item';
+                    li.innerHTML = `
+                        <div class="history-info">
+                            <div>🕒 ${rec.time}</div>
+                            <div style="font-size:12px; color:#999;">包含 ${rec.count} 条内容</div>
+                        </div>
+                        <span class="history-tag">恢复</span>
+                    `;
+                    li.onclick = () => recoverFromHistory(index);
+                    ui.appendChild(li);
+                });
+            }
+            document.getElementById('historyModal').style.display = 'flex';
         }
-        function recoverCurrent() {
-            const data = localStorage.getItem('xhs_latest_session');
-            if (!data) return alert("无当前记录");
-            exportExcel(JSON.parse(data), `恢复_当前_${new Date().getTime()}.xlsx`);
+
+        function closeHistoryModal() {
+            document.getElementById('historyModal').style.display = 'none';
         }
-        function exportExcel(data, filename) {
-            const ws = XLSX.utils.json_to_sheet(data);
+
+        function recoverFromHistory(index) {
+            const history = JSON.parse(localStorage.getItem('xhs_history_list') || "[]");
+            const record = history[index];
+            if (record) {
+                GLOBAL_DATA.generated = record.data; // 恢复到内存
+                downloadResult(false, `历史恢复_${record.time}.xlsx`); // 直接下载
+                closeHistoryModal();
+            }
+        }
+
+        // 🟢 3. 暂停/继续控制
+        function togglePause() {
+            if (isPaused) {
+                isPaused = false;
+                document.getElementById('pauseBtn').innerText = "⏸️ 暂停 (可导出)";
+                document.getElementById('pauseBtn').className = "btn btn-orange";
+                document.getElementById('log').innerHTML += `<div style="color:#e6a23c">▶️ 继续任务...</div>`;
+            } else {
+                isPaused = true;
+                document.getElementById('pauseBtn').innerText = "▶️ 已暂停 (点击继续)";
+                document.getElementById('pauseBtn').className = "btn btn-green";
+                // 暂停时立刻保存一次历史，防止意外关闭
+                saveToHistoryList(GLOBAL_DATA.generated);
+                document.getElementById('log').innerHTML += `<div style="background:#fff3cd; color:#856404; padding:5px;">⏸️ 任务已暂停，您可以点击【导出结果】下载目前已生成的内容。</div>`;
+                // 确保导出按钮可见
+                document.getElementById('downloadBtn').classList.remove('hidden');
+            }
+        }
+
+        // 🟢 4. 导出逻辑 (修复点击没反应的问题)
+        function downloadResult(isPartial = false, customName = null) {
+            if (!GLOBAL_DATA.generated || GLOBAL_DATA.generated.length === 0) {
+                return alert("当前没有可导出的内容");
+            }
+            
+            const ws = XLSX.utils.json_to_sheet(GLOBAL_DATA.generated);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "生成结果");
+            
+            let filename = customName;
+            if (!filename) {
+                const now = new Date();
+                const timeStr = `${now.getHours()}${now.getMinutes()}`;
+                filename = isPartial ? `生成结果_部分_${timeStr}.xlsx` : `生成结果_完整_${timeStr}.xlsx`;
+            }
+            
             XLSX.writeFile(wb, filename);
         }
 
-        // --- 模板下载 ---
+        // --- 核心生成逻辑 ---
+        async function startGeneration() {
+            let apiKey = document.getElementById('apiKey').value;
+            if (!apiKey) apiKey = localStorage.getItem('xhs_user_api_key');
+            
+            const pIdx = document.getElementById('promptTemplate').value;
+            if(!apiKey || pIdx === "") return alert("请检查Key和指令");
+
+            // UI 初始化
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('startBtn').classList.add('hidden');
+            document.getElementById('pauseBtn').classList.remove('hidden');
+            document.getElementById('downloadBtn').classList.remove('hidden'); // 开始就显示导出，方便随时导出
+            
+            isPaused = false; 
+            isRunning = true;
+            
+            const promptRow = GLOBAL_DATA.prompts[pIdx];
+            const originalTemplate = promptRow['指令内容'];
+            const log = document.getElementById('log');
+            GLOBAL_DATA.generated = [];
+            const tasks = GLOBAL_DATA.keywords;
+
+            for(let i=0; i<tasks.length; i++) {
+                // 暂停检测循环
+                while (isPaused) {
+                    await new Promise(r => setTimeout(r, 500));
+                }
+
+                const row = tasks[i];
+                const kw = row['关键词'];
+                if(!kw) continue;
+
+                let finalPrompt = originalTemplate;
+                finalPrompt = finalPrompt.replace(/\{从SEO关键词库选择\}/g, kw).replace(/\{关键词\}/g, kw);
+                const price = row['价格'] || "13.9"; 
+                finalPrompt = finalPrompt.replace(/\{价格\}/g, price);
+                const material = row['材质'] || "银色质感";
+                finalPrompt = finalPrompt.replace(/\{材质\}/g, material);
+                
+                const randomExamples = getRandomTitles(5);
+                if (finalPrompt.includes("{随机爆款标题}")) {
+                    finalPrompt = finalPrompt.replace(/\{随机爆款标题\}/g, randomExamples);
+                } else if (randomExamples) {
+                    finalPrompt += `\n\n【参考以下爆款标题风格】\n${randomExamples}`;
+                }
+
+                log.innerHTML += `<div>[${i+1}/${tasks.length}] 正在生成: <b>${kw}</b></div>`;
+                log.scrollTop = log.scrollHeight;
+
+                try {
+                    const res = await fetch("https://api.gptsapi.net/v1/chat/completions", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey },
+                        body: JSON.stringify({ model: "gpt-4o", messages: [{role: "user", content: finalPrompt}], temperature: 0.8 })
+                    });
+                    const json = await res.json();
+                    if (json.error) throw new Error(json.error.message);
+                    const content = json.choices[0].message.content;
+                    
+                    const lines = content.split('\n').filter(line => line.trim() !== '');
+                    let title = "未生成";
+                    let body = "";
+
+                    if(lines.length > 0) {
+                        let candidate = lines[0].replace(/\*\*/g, '').replace(/标题[:：]/g, '').trim();
+                        if(candidate.length > 20) candidate = candidate.substring(0, 20); 
+                        title = candidate;
+                        lines.shift();
+                        
+                        let rawBody = lines.join('\n'); 
+                        body = rawBody.replace(/正文[:：]/g, '').replace(/#\S+/g, '').trim();
+                        body = body.split(/话题标签|Tags/i)[0].trim();
+                        
+                        if (!body.includes('\n')) body = body.replace(/([。！？])/g, "$1\n\n");
+                    }
+
+                    GLOBAL_DATA.generated.push({
+                        "序号": i+1,
+                        "关键词": kw,
+                        "标题": title,
+                        "正文": body, 
+                        "话题标签": getTags(),
+                        "备注": `💰${price} / 💎${material}`
+                    });
+                    
+                    // 每生成一条，更新历史记录 (覆盖最新的一条，而不是新增)
+                    // 这样如果浏览器崩了，最后一条记录就是最新的
+                    updateLatestHistory(GLOBAL_DATA.generated);
+
+                } catch(e) { log.innerHTML += `<div style="color:red">❌ 失败: ${e.message}</div>`; }
+                await new Promise(r => setTimeout(r, 800));
+            }
+
+            // 完成状态
+            isRunning = false;
+            document.getElementById('pauseBtn').classList.add('hidden');
+            document.getElementById('startBtn').classList.remove('hidden');
+            document.getElementById('startBtn').disabled = false;
+            log.innerHTML += `<div style="color:#0f0">🎉 全部完成！</div>`;
+            downloadResult();
+        }
+
+        // 辅助：更新最新的那条历史记录 (而不是每次都新增)
+        function updateLatestHistory(data) {
+            let history = JSON.parse(localStorage.getItem('xhs_history_list') || "[]");
+            // 如果历史记录为空，或者第一条记录太老（比如超过1小时），就新增一条
+            // 简单起见，我们在 startGeneration 开始时不做操作，在这里判断：
+            // 如果内存里的 GLOBAL_DATA.generated 长度为 1，说明是新任务，unshift 一条新记录
+            // 如果长度 > 1，说明是当前任务的后续，更新 history[0]
+            
+            const nowStr = new Date().toLocaleString();
+            
+            if (data.length === 1) {
+                // 新任务，插入头部
+                history.unshift({ id: new Date().getTime(), time: nowStr, count: 1, data: data });
+            } else if (history.length > 0) {
+                // 更新当前任务
+                history[0].count = data.length;
+                history[0].data = data;
+                history[0].time = nowStr; // 更新时间
+            }
+            
+            // 保持5条
+            if (history.length > 5) history = history.slice(0, 5);
+            localStorage.setItem('xhs_history_list', JSON.stringify(history));
+        }
+
+        // --- 辅助函数 ---
         function downloadSmartTemplate() {
             const wb = XLSX.utils.book_new();
             const wsKw = XLSX.utils.aoa_to_sheet([["关键词", "优先级", "价格", "材质", "备注"], ["水波纹戒指", "⭐⭐⭐", "13.9", "银色质感", "示例"]]);
             XLSX.utils.book_append_sheet(wb, wsKw, SHEET_NAMES.keywords);
             
-            const promptsData = [
-                ["指令名称", "指令内容"],
-                ["指令1：爆款仿写", `我要在小红书发戒指推广笔记。\n【关键词】{从SEO关键词库选择}\n【参考标题】{随机爆款标题}\n\n【标题要求】\n20字内，模仿参考标题的语气。\n\n【正文要求】\n1. 自然分段\n2. 突出{价格}和{材质}\n3. 口语化，不要AI味\n\n请输出：\n标题\n正文`],
-            ];
+            const promptsData = [["指令名称", "指令内容"], ["指令1：爆款仿写", `我要在小红书发戒指推广笔记。\n【关键词】{从SEO关键词库选择}\n【参考标题】{随机爆款标题}\n\n【标题要求】\n20字内，模仿参考标题的语气。\n\n【正文要求】\n1. 自然分段\n2. 突出{价格}和{材质}\n3. 口语化\n\n请输出：\n标题\n正文`]];
             const wsPrompt = XLSX.utils.aoa_to_sheet(promptsData);
             XLSX.utils.book_append_sheet(wb, wsPrompt, SHEET_NAMES.prompts);
 
@@ -145,11 +364,9 @@
             XLSX.utils.book_append_sheet(wb, wsTags, SHEET_NAMES.tags);
             const wsTitles = XLSX.utils.aoa_to_sheet([["爆款标题内容"], ["救命🆘13.9的戒指还要什么自行车？！"]]);
             XLSX.utils.book_append_sheet(wb, wsTitles, SHEET_NAMES.titles);
-
             XLSX.writeFile(wb, "标准填空模板_v4.0结构.xlsx");
         }
 
-        // --- 文件读取 ---
         function handleSystemFile() {
             const file = document.getElementById('systemFile').files[0];
             if (!file) return;
@@ -158,22 +375,17 @@
                 try {
                     const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
                     const findSheet = (name) => workbook.SheetNames.find(n => n.includes(name.replace(/[^a-zA-Z\u4e00-\u9fa5]/g, "")));
-                    
                     let s1 = workbook.Sheets[SHEET_NAMES.keywords] || workbook.Sheets[findSheet("SEO关键词库")];
                     let s2 = workbook.Sheets[SHEET_NAMES.prompts] || workbook.Sheets[findSheet("AI生成指令")];
                     let s3 = workbook.Sheets[SHEET_NAMES.tags] || workbook.Sheets[findSheet("话题标签SEO库")];
                     let s4 = workbook.Sheets[SHEET_NAMES.titles] || workbook.Sheets[findSheet("爆款标题库")];
-
                     if(s1) GLOBAL_DATA.keywords = XLSX.utils.sheet_to_json(s1);
                     if(s2) GLOBAL_DATA.prompts = XLSX.utils.sheet_to_json(s2);
                     if(s3) GLOBAL_DATA.tags = XLSX.utils.sheet_to_json(s3);
                     if(s4) GLOBAL_DATA.titles = XLSX.utils.sheet_to_json(s4).map(r => Object.values(r)[0]);
-
-                    if (!s1 || !s2) return alert("❌ 表格结构不完整，请确保包含必要的Sheet");
-
-                    document.getElementById('fileStatus').innerHTML = `✅ 已加载指令库：共 ${GLOBAL_DATA.prompts.length} 条指令`;
+                    if (!s1 || !s2) return alert("❌ 表格不完整");
+                    document.getElementById('fileStatus').innerHTML = `✅ 加载成功`;
                     document.getElementById('fileStatus').classList.remove('hidden');
-                    
                     const select = document.getElementById('promptTemplate');
                     select.innerHTML = '<option value="">-- 请选择 --</option>';
                     GLOBAL_DATA.prompts.forEach((row, i) => { if(row['指令名称']) select.innerHTML += `<option value="${i}">${row['指令名称']}</option>`; });
@@ -194,102 +406,6 @@
             if (!GLOBAL_DATA.titles || GLOBAL_DATA.titles.length === 0) return "";
             const shuffled = [...GLOBAL_DATA.titles].sort(() => 0.5 - Math.random());
             return shuffled.slice(0, count).map((t, i) => `${i+1}. ${t}`).join("\n");
-        }
-
-        // --- 生成逻辑 ---
-        async function startGeneration() {
-            let apiKey = document.getElementById('apiKey').value;
-            // 自动补救：如果框里没填，尝试去缓存拿
-            if (!apiKey) apiKey = localStorage.getItem('xhs_user_api_key');
-            
-            const pIdx = document.getElementById('promptTemplate').value;
-            if(!apiKey || pIdx === "") return alert("请配置API和指令");
-
-            backupData(); // 备份
-
-            document.getElementById('startBtn').disabled = true;
-            document.getElementById('downloadBtn').classList.add('hidden');
-            
-            const promptRow = GLOBAL_DATA.prompts[pIdx];
-            const originalTemplate = promptRow['指令内容'];
-            
-            const log = document.getElementById('log');
-            GLOBAL_DATA.generated = [];
-            const tasks = GLOBAL_DATA.keywords;
-
-            for(let i=0; i<tasks.length; i++) {
-                const row = tasks[i];
-                const kw = row['关键词'];
-                if(!kw) continue;
-
-                let finalPrompt = originalTemplate;
-                // 1. 变量替换
-                finalPrompt = finalPrompt.replace(/\{从SEO关键词库选择\}/g, kw).replace(/\{关键词\}/g, kw);
-                const price = row['价格'] || "13.9"; 
-                finalPrompt = finalPrompt.replace(/\{价格\}/g, price);
-                const material = row['材质'] || "银色质感";
-                finalPrompt = finalPrompt.replace(/\{材质\}/g, material);
-                
-                // 2. 爆款标题库注入
-                const randomExamples = getRandomTitles(5);
-                if (finalPrompt.includes("{随机爆款标题}")) {
-                    finalPrompt = finalPrompt.replace(/\{随机爆款标题\}/g, randomExamples);
-                } else if (randomExamples) {
-                    finalPrompt += `\n\n【参考以下爆款标题风格】\n${randomExamples}`;
-                }
-
-                log.innerHTML += `<div>[${i+1}/${tasks.length}] 执行指令: <b>${kw}</b></div>`;
-                log.scrollTop = log.scrollHeight;
-
-                try {
-                    const res = await fetch("https://api.gptsapi.net/v1/chat/completions", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey },
-                        body: JSON.stringify({ model: "gpt-4o", messages: [{role: "user", content: finalPrompt}], temperature: 0.8 })
-                    });
-                    const json = await res.json();
-                    if (json.error) throw new Error(json.error.message);
-                    const content = json.choices[0].message.content;
-                    
-                    // 3. 结果解析
-                    const lines = content.split('\n').filter(line => line.trim() !== '');
-                    let title = "未生成";
-                    let body = "";
-
-                    if(lines.length > 0) {
-                        let candidate = lines[0].replace(/\*\*/g, '').replace(/标题[:：]/g, '').trim();
-                        if(candidate.length > 20) candidate = candidate.substring(0, 20); 
-                        title = candidate;
-                        lines.shift();
-                        
-                        let rawBody = lines.join('\n'); 
-                        body = rawBody.replace(/正文[:：]/g, '').replace(/#\S+/g, '').trim();
-                        body = body.split(/话题标签|Tags/i)[0].trim();
-                        
-                        if (!body.includes('\n')) {
-                             body = body.replace(/([。！？])/g, "$1\n\n");
-                        }
-                    }
-
-                    GLOBAL_DATA.generated.push({
-                        "序号": i+1,
-                        "关键词": kw,
-                        "标题": title,
-                        "正文": body, 
-                        "话题标签": getTags(),
-                        "备注": `💰${price} / 💎${material}`
-                    });
-                    
-                    localStorage.setItem('xhs_latest_session', JSON.stringify(GLOBAL_DATA.generated));
-
-                } catch(e) { log.innerHTML += `<div style="color:red">❌ 失败: ${e.message}</div>`; }
-                await new Promise(r => setTimeout(r, 800));
-            }
-
-            document.getElementById('downloadBtn').classList.remove('hidden');
-            document.getElementById('startBtn').disabled = false;
-            log.innerHTML += `<div style="color:#0f0">🎉 全部完成！</div>`;
-            exportExcel(GLOBAL_DATA.generated, `最终结果_v5.2.xlsx`);
         }
     </script>
 </body>
