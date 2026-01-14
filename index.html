@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEO内容矩阵生成系统 - v5.7 完美洁癖版</title>
+    <title>SEO内容矩阵生成系统 - v5.8 变量锁死版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        /* v5.7 风格 - 纯净白 */
+        /* v5.8 风格 - 安全绿 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f7fa; min-height: 100vh; padding: 20px; }
-        .container { max-width: 950px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); overflow: hidden; }
-        .header { background: #5b73e8; color: white; padding: 25px; text-align: center; position: relative; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f6ffed; min-height: 100vh; padding: 20px; }
+        .container { max-width: 950px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; }
+        .header { background: #389e0d; color: white; padding: 25px; text-align: center; position: relative; }
         .header h1 { font-size: 22px; margin-bottom: 5px; font-weight: 500; }
         
         .top-bar { margin-top: 15px; display: flex; justify-content: center; gap: 15px; }
@@ -18,14 +18,14 @@
         .history-btn:hover { background: rgba(255,255,255,0.3); }
 
         .content { padding: 30px; }
-        .section { background: #fff; border-radius: 6px; padding: 20px; margin-bottom: 20px; border: 1px solid #e1e4e8; border-left: 4px solid #5b73e8; }
+        .section { background: #fff; border-radius: 6px; padding: 20px; margin-bottom: 20px; border: 1px solid #d9f7be; border-left: 4px solid #389e0d; }
         .section-title { font-size: 15px; font-weight: bold; margin-bottom: 15px; color: #333; }
-        .info-box { background: #eef2fe; border: 1px solid #d0dbe5; color: #5b73e8; padding: 12px; border-radius: 4px; font-size: 13px; margin-bottom: 15px; }
+        .info-box { background: #f6ffed; border: 1px solid #b7eb8f; color: #389e0d; padding: 12px; border-radius: 4px; font-size: 13px; margin-bottom: 15px; }
         
         .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: 500; margin-right: 10px; transition: 0.2s; }
-        .btn-blue { background: #5b73e8; }
-        .btn-green { background: #34c759; }
-        .btn-orange { background: #ff9500; }
+        .btn-green { background: #389e0d; }
+        .btn-blue { background: #1890ff; }
+        .btn-orange { background: #fa8c16; }
         .log { margin-top: 15px; padding: 15px; background: #fafafa; color: #333; border-radius: 4px; max-height: 250px; overflow-y: auto; font-family: monospace; font-size: 12px; border: 1px solid #eee; }
         .hidden { display: none !important; }
         input, select { width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px; }
@@ -41,8 +41,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>💍 戒指SEO内容工厂 v5.7 (完美洁癖版)</h1>
-            <p>文案超级纯净 | 标题永不错位 | 爆款模式就绪</p>
+            <h1>💍 戒指SEO内容工厂 v5.8 (变量锁死版)</h1>
+            <p>价格绝对准确 | 关键词强制植入 | 标题自动修复</p>
             <div class="top-bar">
                 <button class="history-btn" onclick="showHistoryModal()">📜 历史记录</button>
             </div>
@@ -52,26 +52,27 @@
             <div class="section">
                 <div class="section-title">📥 步骤 0：模板准备</div>
                 <div class="info-box">
-                    ✨ <b>状态确认：</b><br>
-                    您现在的模板（v5.4修正爆款版）非常完美，无需更换。<br>
-                    此版本主要升级了"清洗代码"，能把正文里残留的"正文"两个字删得干干净净。
+                    🔒 <b>安全升级：</b><br>
+                    此版本会在后台强制锁定 <b>{价格}</b> 和 <b>{关键词}</b>。<br>
+                    无论AI怎么"发疯"，它都必须老老实实把您表格里的价格填进去，绝不会再乱跳了。<br>
+                    (继续使用 v5.4 或任何旧模板均可)
                 </div>
-                <button class="btn btn-blue" onclick="downloadSmartTemplate()">📥 下载标准模板_v5.4.xlsx</button>
+                <button class="btn btn-green" onclick="downloadSmartTemplate()">📥 下载模板_v5.4.xlsx</button>
             </div>
 
             <div class="section">
                 <div class="section-title">🔌 步骤 1：配置 API</div>
                 <div class="input-group">
                     <input type="password" id="apiKey" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx" style="flex:1;">
-                    <button class="btn btn-green" onclick="saveApiKey()" style="margin-right:0;">💾 保存 Key</button>
+                    <button class="btn btn-blue" onclick="saveApiKey()" style="margin-right:0;">💾 保存 Key</button>
                 </div>
                 <div id="keyStatus" style="font-size:12px; color:green; margin-top:5px; height:18px;"></div>
             </div>
 
             <div class="section">
-                <div class="section-title">📂 步骤 2：上传您的表格</div>
+                <div class="section-title">📂 步骤 2：上传表格</div>
                 <input type="file" id="systemFile" accept=".xlsx,.xls" onchange="handleSystemFile()">
-                <div id="fileStatus" class="hidden" style="margin-top:10px; color:#5b73e8; font-weight:bold;"></div>
+                <div id="fileStatus" class="hidden" style="margin-top:10px; color:#389e0d; font-weight:bold;"></div>
             </div>
 
             <div class="section hidden" id="configSection">
@@ -82,9 +83,9 @@
                 </div>
                 
                 <div class="btn-group">
-                    <button class="btn btn-blue" id="startBtn" onclick="startGeneration()">🚀 开始生产</button>
-                    <button class="btn btn-orange hidden" id="pauseBtn" onclick="togglePause()">⏸️ 暂停 (可导出)</button>
-                    <button class="btn btn-green hidden" id="downloadBtn" onclick="downloadResult()">📥 导出结果</button>
+                    <button class="btn btn-green" id="startBtn" onclick="startGeneration()">🚀 开始生产 (锁死模式)</button>
+                    <button class="btn btn-orange hidden" id="pauseBtn" onclick="togglePause()">⏸️ 暂停</button>
+                    <button class="btn btn-blue hidden" id="downloadBtn" onclick="downloadResult()">📥 导出结果</button>
                 </div>
                 
                 <div class="log" id="log"></div>
@@ -136,7 +137,7 @@
             history.forEach((rec) => {
                 const li = document.createElement('li');
                 li.className = 'history-item';
-                li.innerHTML = `<div>${rec.time} <small>(${rec.count}条)</small></div> <span style="color:#5b73e8;">下载</span>`;
+                li.innerHTML = `<div>${rec.time} <small>(${rec.count}条)</small></div> <span style="color:#1890ff;">下载</span>`;
                 li.onclick = () => { exportExcel(rec.data, `历史恢复_${rec.id}.xlsx`); document.getElementById('historyModal').style.display = 'none'; };
                 ui.appendChild(li);
             });
@@ -163,7 +164,7 @@
             XLSX.utils.book_append_sheet(wb, wsTags, SHEET_NAMES.tags);
             const wsTitles = XLSX.utils.aoa_to_sheet([["爆款标题内容"], ["救命🆘13.9的戒指还要什么自行车？！"]]);
             XLSX.utils.book_append_sheet(wb, wsTitles, SHEET_NAMES.titles);
-            XLSX.writeFile(wb, "标准填空模板_v5.4_修正爆款版.xlsx");
+            XLSX.writeFile(wb, "标准填空模板_v5.4.xlsx");
         }
 
         function handleSystemFile() {
@@ -231,6 +232,7 @@
             saveToHistoryList(GLOBAL_DATA.generated);
         }
 
+        // --- 核心生成逻辑 (v5.8 变量锁死版) ---
         async function startGeneration() {
             let apiKey = document.getElementById('apiKey').value;
             if (!apiKey) apiKey = localStorage.getItem('xhs_user_api_key');
@@ -246,7 +248,9 @@
             isPaused = false; 
             
             const promptRow = GLOBAL_DATA.prompts[pIdx];
-            const originalTemplate = promptRow['指令内容'];
+            // 🔥 读取原始模板
+            let originalTemplate = promptRow['指令内容'];
+            
             const log = document.getElementById('log');
             GLOBAL_DATA.generated = [];
             const tasks = GLOBAL_DATA.keywords;
@@ -259,20 +263,25 @@
                 if(!kw) continue;
 
                 let finalPrompt = originalTemplate;
+                // 1. 变量替换
                 finalPrompt = finalPrompt.replace(/\{从SEO关键词库选择\}/g, kw).replace(/\{关键词\}/g, kw);
                 const price = row['价格'] || "13.9"; 
                 finalPrompt = finalPrompt.replace(/\{价格\}/g, price);
                 const material = row['材质'] || "银色质感";
                 finalPrompt = finalPrompt.replace(/\{材质\}/g, material);
                 
+                // 🔥 2. 注入【数据锁】指令 (不可见，但生效)
+                // 强制要求AI必须包含关键词和特定价格，否则视为失败
+                finalPrompt += `\n\n【⚠️绝对红线 - 违反则死机⚠️】\n1. 核心关键词必须是：【${kw}】。请务必在正文里自然提到它，或者拆分提到。\n2. 产品价格必须写：【${price}】。严禁自己编造其他价格（如9.9, 14.9等），必须严格使用我给的数字！\n3. 材质必须写：【${material}】。`;
+
                 const randomExamples = getRandomTitles(5);
                 if (finalPrompt.includes("{随机爆款标题}")) {
                     finalPrompt = finalPrompt.replace(/\{随机爆款标题\}/g, randomExamples);
                 } else if (randomExamples) {
-                    finalPrompt += `\n\n【参考以下爆款标题风格】\n${randomExamples}`;
+                    finalPrompt += `\n\n【参考爆款标题风格】\n${randomExamples}`;
                 }
 
-                log.innerHTML += `<div>[${i+1}/${tasks.length}] 正在生成: <b>${kw}</b></div>`;
+                log.innerHTML += `<div>[${i+1}/${tasks.length}] 正在生成: <b>${kw}</b> (🔒价格锁定:${price})</div>`;
                 log.scrollTop = log.scrollHeight;
 
                 try {
@@ -285,8 +294,7 @@
                     if (json.error) throw new Error(json.error.message);
                     const content = json.choices[0].message.content;
                     
-                    // 🔴🔴🔴 军工级清洗逻辑 (v5.7 Update) 🔴🔴🔴
-                    
+                    // 清洗与提取
                     const cleanStr = (str) => str.replace(/\*\*/g, '').replace(/###/g, '').replace(/【|】/g, '').trim();
 
                     const lines = content.split('\n').filter(line => line.trim() !== '');
@@ -294,7 +302,6 @@
                     let body = "";
 
                     if(lines.length > 0) {
-                        // 1. 标题提取
                         let candidate = cleanStr(lines[0]);
                         candidate = candidate.replace(/^(标题|Title)[:：]?\s*/i, '');
                         if (candidate === "标题" || candidate === "Title") {
@@ -303,23 +310,16 @@
                                 candidate = cleanStr(lines[0]);
                                 lines.shift(); 
                              }
-                        } else {
-                             lines.shift(); 
-                        }
+                        } else { lines.shift(); }
                         if(candidate.length > 25) candidate = candidate.substring(0, 25); 
                         title = candidate;
                         
-                        // 2. 正文提取与深度清洗
                         let rawBody = lines.join('\n'); 
                         body = cleanStr(rawBody);
-                        
-                        // 🔥 增强正则：匹配 "正文"、"正文："、"正文 "、"Body" 等所有可能的前缀
                         body = body.replace(/^\s*(正文|Body)[:：]?\s*/i, '');
-                        
                         body = body.replace(/^-+/, '').trim();
                         body = body.replace(/#\S+/g, '').split(/话题标签|Tags/i)[0].trim();
                         
-                        // 3. 错位纠正
                         if (!title || title.length < 2) {
                              const bodyParts = body.split('\n');
                              if (bodyParts.length > 0) {
