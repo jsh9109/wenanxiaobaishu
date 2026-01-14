@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEO内容矩阵生成系统 - v5.5 强力清洗版</title>
+    <title>SEO内容矩阵生成系统 - v5.6 错位修复版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        /* v5.5 风格 - 稳定可靠 */
+        /* v5.6 风格 - 稳重深蓝 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; min-height: 100vh; padding: 20px; }
         .container { max-width: 950px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; }
-        .header { background: #001529; color: white; padding: 25px; text-align: center; position: relative; }
+        .header { background: #002766; color: white; padding: 25px; text-align: center; position: relative; }
         .header h1 { font-size: 22px; margin-bottom: 5px; font-weight: 500; }
         
         .top-bar { margin-top: 15px; display: flex; justify-content: center; gap: 15px; }
@@ -18,9 +18,9 @@
         .history-btn:hover { background: rgba(255,255,255,0.3); }
 
         .content { padding: 30px; }
-        .section { background: #fff; border-radius: 6px; padding: 20px; margin-bottom: 20px; border: 1px solid #e8e8e8; border-left: 4px solid #001529; }
+        .section { background: #fff; border-radius: 6px; padding: 20px; margin-bottom: 20px; border: 1px solid #e8e8e8; border-left: 4px solid #002766; }
         .section-title { font-size: 15px; font-weight: bold; margin-bottom: 15px; color: #333; }
-        .info-box { background: #e6f7ff; border: 1px solid #91d5ff; color: #001529; padding: 12px; border-radius: 4px; font-size: 13px; margin-bottom: 15px; }
+        .info-box { background: #e6f7ff; border: 1px solid #91d5ff; color: #002766; padding: 12px; border-radius: 4px; font-size: 13px; margin-bottom: 15px; }
         
         .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; color: white; font-weight: 500; margin-right: 10px; transition: 0.2s; }
         .btn-blue { background: #1890ff; }
@@ -42,8 +42,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>💍 戒指SEO内容工厂 v5.5 (强力清洗版)</h1>
-            <p>自动去除乱码 | 标题自动归位 | 完美兼容野路子指令</p>
+            <h1>💍 戒指SEO内容工厂 v5.6 (错位修复版)</h1>
+            <p>即使AI把标题写在正文里，我也能把它抠出来！</p>
             <div class="top-bar">
                 <button class="history-btn" onclick="showHistoryModal()">📜 历史记录</button>
             </div>
@@ -54,8 +54,8 @@
                 <div class="section-title">📥 步骤 0：模板准备</div>
                 <div class="info-box">
                     🛠️ <b>修复说明：</b><br>
-                    无需更换模板！继续使用您的<b>"爆款修正版"</b>模板即可。<br>
-                    本系统已升级清洗算法，无论AI输出多少"###"或"正文："等乱码，都能自动洗干净。
+                    已加入"自动纠错"逻辑。如果生成的表格里【标题】是空的，系统会自动把正文的第一句话剪切过去当标题。<br>
+                    您继续使用之前的<b>v5.4修正模板</b>即可，无需更换。
                 </div>
                 <button class="btn btn-blue" onclick="downloadSmartTemplate()">📥 下载标准模板_v5.4.xlsx</button>
             </div>
@@ -234,7 +234,7 @@
             saveToHistoryList(GLOBAL_DATA.generated);
         }
 
-        // --- 核心生成逻辑 (升级清洗版) ---
+        // --- 核心生成逻辑 (v5.6 错位修复版) ---
         async function startGeneration() {
             let apiKey = document.getElementById('apiKey').value;
             if (!apiKey) apiKey = localStorage.getItem('xhs_user_api_key');
@@ -289,42 +289,56 @@
                     if (json.error) throw new Error(json.error.message);
                     const content = json.choices[0].message.content;
                     
-                    // 🔴🔴🔴 强力清洗逻辑 (Super Cleaner) 🔴🔴🔴
+                    // 🔴🔴🔴 智能清洗与纠错逻辑 🔴🔴🔴
                     
-                    // 1. 去除所有 Markdown 符号和常见 Label
-                    const cleanStr = (str) => {
-                        return str.replace(/\*\*/g, '') // 去粗体
-                                  .replace(/###/g, '')   // 去标题符
-                                  .replace(/【|】/g, '') // 去括号
-                                  .trim();
-                    };
+                    const cleanStr = (str) => str.replace(/\*\*/g, '').replace(/###/g, '').replace(/【|】/g, '').trim();
 
                     const lines = content.split('\n').filter(line => line.trim() !== '');
-                    let title = "未生成";
+                    let title = "";
                     let body = "";
 
                     if(lines.length > 0) {
-                        // 强制第一行作为标题
+                        // 1. 尝试获取第一行作为标题
                         let candidate = cleanStr(lines[0]);
-                        // 去掉 "标题：" "Title:" 等前缀
                         candidate = candidate.replace(/^(标题|Title)[:：]?\s*/i, '');
-                        
-                        if(candidate.length > 20) candidate = candidate.substring(0, 20); 
+
+                        // 🔥 智能判断：如果第一行就是"标题"两个字，那说明真标题在下一行
+                        if (candidate === "标题" || candidate === "Title") {
+                             lines.shift(); // 扔掉 "标题" 这行
+                             if (lines.length > 0) {
+                                candidate = cleanStr(lines[0]);
+                                lines.shift(); // 现在的这行才是真标题，扔掉
+                             }
+                        } else {
+                             lines.shift(); // 第一行是真标题，正常扔掉
+                        }
+
+                        // 截断过长标题
+                        if(candidate.length > 25) candidate = candidate.substring(0, 25); 
                         title = candidate;
-                        lines.shift(); // 移除第一行
                         
-                        // 剩下的全部作为正文
+                        // 2. 处理正文
                         let rawBody = lines.join('\n'); 
-                        
-                        // 再次清洗正文里的杂质
                         body = cleanStr(rawBody);
-                        // 去掉 "正文：" "Body:" 等前缀（如果AI在第二行又写了一遍）
-                        body = body.replace(/^(正文|Body)[:：]?\s*/i, '');
                         
+                        // 去掉 "正文：" 等前缀
+                        body = body.replace(/^(正文|Body)[:：]?\s*/i, '');
+                        // 去掉分割线
+                        body = body.replace(/^-+/, '').trim();
                         // 去掉底部标签
                         body = body.replace(/#\S+/g, '').split(/话题标签|Tags/i)[0].trim();
                         
-                        // 智能补救：如果AI完全没换行，我们帮它换
+                        // 🔥 终极纠错：如果 title 是空的，或者 title 看起来像正文的一部分
+                        // 强制把正文的第一句话挖出来当标题
+                        if (!title || title.length < 2) {
+                             const bodyParts = body.split('\n');
+                             if (bodyParts.length > 0) {
+                                 title = bodyParts[0]; // 抢第一行做标题
+                                 body = bodyParts.slice(1).join('\n'); // 剩下的做正文
+                             }
+                        }
+
+                        // 智能补行
                         if (!body.includes('\n')) body = body.replace(/([。！？])/g, "$1\n\n");
                     }
 
